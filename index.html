@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pop Star | Fashion Dress-Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ffcce5;
+            --primary-dark: #ff99cc;
+            --secondary: #e5ccff;
+            --accent: #ccffff;
+            --gold: #ffd700;
+            --dark: #2d3436;
+            --glass: rgba(255, 255, 255, 0.7);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 1000px;
+            height: 100%;
+            max-height: 700px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            position: relative;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+        }
+
+        /* HUD */
+        #hud {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            background: var(--glass);
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .coin-icon {
+            color: var(--gold);
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        /* Scenes */
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .scene.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* Menu Scene */
+        #scene-menu {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: url('assets/background.png') center/cover no-repeat;
+        }
+
+        .title-card {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(to right, #ff4d94, #9933ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .btn-play {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            color: white;
+            background: linear-gradient(to right, #ff99cc, #cc99ff);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+
+        .btn-play:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(255, 102, 178, 0.3);
+        }
+
+        /* Closet Scene */
+        #scene-closet {
+            flex-direction: row;
+        }
+
+        .closet-left {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .avatar-container {
+            width: 80%;
+            height: 90%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .avatar-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .closet-right {
+            width: 400px;
+            background: var(--glass);
+            border-left: 1px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tabs {
+            display: flex;
+            padding: 10px;
+            gap: 5px;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: background 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary-dark);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .inventory-grid {
+            flex: 1;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 15px;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, border 0.2s;
+            border: 2px solid transparent;
+            position: relative;
+            padding: 5px;
+        }
+
+        .item-card:hover {
+            transform: scale(1.05);
+        }
+
+        .item-card.selected {
+            border-color: var(--primary-dark);
+        }
+
+        .item-card img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
+        .item-card.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 0.8rem;
+        }
+
+        .item-price {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .closet-footer {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-finish {
+            width: 100%;
+            padding: 12px;
+            border-radius: 30px;
+            border: none;
+            background: var(--secondary);
+            color: var(--dark);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-finish:hover {
+            background: var(--primary);
+        }
+
+        /* Photo Scene */
+        #scene-photo {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+        }
+
+        .photo-canvas {
+            width: 400px;
+            height: 500px;
+            background: linear-gradient(to bottom, #fce4ec, #f3e5f5);
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 10px solid white;
+        }
+
+        .social-ui {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .social-btn {
+            background: rgba(255,255,255,0.8);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .btn-post {
+            margin-top: 30px;
+            padding: 15px 60px;
+            background: var(--dark);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Modal */
+        #modal-reward {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .score-box {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin: 20px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            #game-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+            #scene-closet {
+                flex-direction: column;
+            }
+            .closet-left {
+                height: 50%;
+            }
+            .closet-right {
+                width: 100%;
+                height: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- HUD -->
+        <div id="hud">
+            <span class="coin-icon">✨</span>
+            <span id="score-display">100</span>
+        </div>
+
+        <!-- Menu Scene -->
+        <div id="scene-menu" class="scene active">
+            <div class="title-card">
+                <h1>Pop Star</h1>
+                <p style="margin-bottom: 30px; color: #666;">Crie seu estilo, conquiste as passarelas!</p>
+                <button class="btn-play" onclick="changeScene('scene-closet')">Começar Jogar</button>
+            </div>
+        </div>
+
+        <!-- Closet Scene -->
+        <div id="scene-closet" class="scene">
+            <div class="closet-left">
+                <div class="avatar-container" id="closet-avatar">
+                    <img src="assets/avatar_base.png" class="avatar-layer" style="z-index: 1;">
+                    <img id="layer-hair" src="" class="avatar-layer" style="z-index: 10;">
+                    <img id="layer-dress" src="" class="avatar-layer" style="z-index: 5;">
+                </div>
+            </div>
+            <div class="closet-right">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('hair')">CABELOS</button>
+                    <button class="tab" onclick="switchTab('dress')">ROUPAS</button>
+                    <button class="tab" onclick="switchTab('shoes')">SAPATOS</button>
+                </div>
+                <div class="inventory-grid" id="inventory-grid">
+                    <!-- Items will be injected here -->
+                </div>
+                <div class="closet-footer">
+                    <button class="btn-finish" onclick="finalizeLook()">Finalizar Look</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Scene -->
+        <div id="scene-photo" class="scene">
+            <div class="photo-canvas" id="photo-canvas">
+                <!-- Avatar clone will be here -->
+                <div class="social-ui">
+                    <div class="social-btn">❤️</div>
+                    <div class="social-btn">💬</div>
+                    <div class="social-btn">✈️</div>
+                </div>
+            </div>
+            <button class="btn-post" onclick="postLook()">Postar no Feed</button>
+            <button class="btn-back" onclick="changeScene('scene-closet')" style="margin-top: 10px; background: transparent; border: none; cursor: pointer; color: #666;">Editar</button>
+        </div>
+    </div>
+
+    <!-- Reward Modal -->
+    <div id="modal-reward">
+        <div class="modal-content">
+            <h2>Look Publicado!</h2>
+            <p>Seu estilo impressionou a todos!</p>
+            <div class="score-box" id="fashion-points">+0</div>
+            <p>Fashion Points ganhos</p>
+            <button class="btn-play" style="margin-top: 30px;" onclick="closeModal()">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const state = {
+            points: parseInt(localStorage.getItem('pop_star_points')) || 100,
+            currentLook: {
+                hair: null,
+                dress: null,
+                shoes: null
+            },
+            currentTab: 'hair'
+        };
+
+        const inventory = {
+            hair: [
+                { id: 'hair_01', name: 'Rosa Ondulado', src: 'assets/hair_pink.png', price: 0 },
+                { id: 'hair_02', name: 'Loiro Glam', src: 'https://via.placeholder.com/200/FFD700?text=Loiro', price: 50 },
+                { id: 'hair_03', name: 'Preto Chic', src: 'https://via.placeholder.com/200/000000?text=Preto', price: 80 }
+            ],
+            dress: [
+                { id: 'dress_01', name: 'Vestido Azul Sparkle', src: 'assets/dress_glamour.png', price: 0 },
+                { id: 'dress_02', name: 'Vestido Rosa', src: 'https://via.placeholder.com/200/FFB6C1?text=Rosa', price: 120 },
+                { id: 'dress_03', name: 'Vestido Noite', src: 'https://via.placeholder.com/200/4B0082?text=Noite', price: 200 }
+            ],
+            shoes: [
+                { id: 'shoes_01', name: 'Salto Prata', src: 'https://via.placeholder.com/200/C0C0C0?text=Prata', price: 0 },
+                { id: 'shoes_02', name: 'Salto Ouro', src: 'https://via.placeholder.com/200/FFD700?text=Ouro', price: 150 }
+            ]
+        };
+
+        // Initialize HUD
+        function updateHUD() {
+            document.getElementById('score-display').innerText = state.points;
+            localStorage.setItem('pop_star_points', state.points);
+        }
+
+        // Scene Control
+        function changeScene(sceneId) {
+            document.querySelectorAll('.scene').forEach(s => {
+                s.classList.remove('active');
+            });
+            const nextScene = document.getElementById(sceneId);
+            nextScene.style.display = 'flex';
+            setTimeout(() => nextScene.classList.add('active'), 50);
+
+            if(sceneId === 'scene-closet') renderInventory();
+        }
+
+        // Tab Control
+        function switchTab(tabId) {
+            state.currentTab = tabId;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderInventory();
+        }
+
+        // Inventory Rendering
+        function renderInventory() {
+            const grid = document.getElementById('inventory-grid');
+            grid.innerHTML = '';
+            
+            inventory[state.currentTab].forEach(item => {
+                const card = document.createElement('div');
+                card.className = `item-card ${state.points < item.price ? 'locked' : ''} ${state.currentLook[state.currentTab] === item.id ? 'selected' : ''}`;
+                card.onclick = () => selectItem(item);
+
+                const img = document.createElement('img');
+                img.src = item.src;
+                
+                const price = document.createElement('div');
+                price.className = 'item-price';
+                price.innerText = item.price > 0 ? `${item.price} ⭐` : 'Grátis';
+
+                card.appendChild(img);
+                card.appendChild(price);
+                grid.appendChild(card);
+            });
+        }
+
+        // Selection Logic
+        function selectItem(item) {
+            if (state.points < item.price) {
+                alert('Você precisa de mais Fashion Points!');
+                return;
+            }
+
+            state.currentLook[state.currentTab] = item.id;
+            
+            // Update Avatar Layer
+            const layerId = `layer-${state.currentTab}`;
+            const layer = document.getElementById(layerId);
+            if (layer) {
+                layer.src = item.src;
+                layer.style.display = 'block';
+            }
+
+            renderInventory();
+        }
+
+        // Photo Studio
+        function finalizeLook() {
+            const canvas = document.getElementById('photo-canvas');
+            const avatar = document.getElementById('closet-avatar');
+            
+            // Remove previous avatar if any
+            const old = canvas.querySelector('.avatar-container');
+            if (old) old.remove();
+
+            const clone = avatar.cloneNode(true);
+            canvas.appendChild(clone);
+            
+            changeScene('scene-photo');
+        }
+
+        function postLook() {
+            const reward = Math.floor(Math.random() * (200 - 50 + 1)) + 50;
+            state.points += reward;
+            updateHUD();
+
+            document.getElementById('fashion-points').innerText = `+${reward}`;
+            document.getElementById('modal-reward').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal-reward').style.display = 'none';
+            changeScene('scene-closet');
+        }
+
+        // Init
+        updateHUD();
+    </script>
+</body>
+</html>
