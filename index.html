@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pop Star | Fashion Dress-Up</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <title>Pop Star Royale | Fashion Universe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #ffcce5;
-            --primary-dark: #ff99cc;
-            --secondary: #e5ccff;
-            --accent: #ccffff;
-            --gold: #ffd700;
-            --dark: #2d3436;
-            --glass: rgba(255, 255, 255, 0.85);
-            --shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            --primary: #ffb3d9;
+            --primary-dark: #ff66b2;
+            --secondary: #d1b3ff;
+            --accent: #b3ffff;
+            --gold: #ffcc00;
+            --dark: #1a1a1a;
+            --glass: rgba(255, 255, 255, 0.9);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -22,11 +23,13 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Outfit', sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
         body {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #ffe6f2, #f3e6ff, #e6ffff);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             min-height: 100vh;
             overflow: hidden;
             display: flex;
@@ -34,47 +37,66 @@
             align-items: center;
         }
 
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         #game-container {
             width: 100%;
-            max-width: 1200px;
-            height: 95vh;
-            max-height: 850px;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(25px);
-            border-radius: 40px;
+            max-width: 1300px;
+            height: 96vh;
+            max-height: 900px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(30px);
+            border-radius: 50px;
             position: relative;
             box-shadow: var(--shadow);
             border: 2px solid white;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
-        /* HUD */
-        #hud {
-            position: absolute;
-            top: 25px;
-            right: 25px;
+        /* HUD & Navbar */
+        nav {
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             z-index: 1000;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            background: linear-gradient(to right, #ff4d94, #9933ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-badge {
+            background: var(--glass);
+            padding: 10px 25px;
+            border-radius: 30px;
             display: flex;
             align-items: center;
-            background: var(--glass);
-            padding: 12px 24px;
-            border-radius: 35px;
-            box-shadow: var(--shadow);
+            gap: 12px;
             font-weight: 800;
-            color: var(--dark);
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             border: 2px solid white;
         }
 
-        .coin-icon {
-            color: var(--gold);
-            margin-right: 12px;
-            font-size: 1.6rem;
-            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4));
-        }
-
-        /* Scenes */
+        /* Global Scenes */
         .scene {
             position: absolute;
             top: 0;
@@ -83,12 +105,15 @@
             height: 100%;
             display: none;
             opacity: 0;
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0.98);
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding-top: 100px;
         }
 
         .scene.active {
             display: flex;
             opacity: 1;
+            transform: scale(1);
         }
 
         /* Menu Scene */
@@ -97,52 +122,42 @@
             justify-content: center;
             align-items: center;
             background: url('assets/background.png') center/cover no-repeat;
+            padding-top: 0;
         }
 
-        .title-card {
+        .hero-box {
             background: var(--glass);
-            padding: 60px 80px;
+            padding: 80px;
             border-radius: 60px;
             text-align: center;
-            box-shadow: var(--shadow);
-            animation: float 5s ease-in-out infinite;
             border: 2px solid white;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+            animation: heroFloat 6s ease-in-out infinite;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-25px) rotate(2deg); }
+        @keyframes heroFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
         }
 
-        h1 {
-            font-size: 6.5rem;
-            background: linear-gradient(135deg, #ff4d94, #9933ff, #4d94ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 25px;
-            letter-spacing: -5px;
+        .btn-main {
+            padding: 25px 80px;
+            font-size: 1.8rem;
             font-weight: 900;
-            line-height: 1;
-        }
-
-        .btn-play {
-            padding: 22px 70px;
-            font-size: 1.6rem;
             color: white;
-            background: linear-gradient(135deg, #ff99cc, #cc99ff);
+            background: linear-gradient(135deg, #ff66b2, #9933ff);
             border: none;
-            border-radius: 45px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-weight: 800;
-            box-shadow: 0 15px 40px rgba(255, 153, 204, 0.6);
+            transition: var(--transition);
+            box-shadow: 0 20px 40px rgba(255, 102, 178, 0.4);
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .btn-play:hover {
-            transform: scale(1.1) rotate(-2deg);
-            box-shadow: 0 20px 50px rgba(255, 102, 178, 0.7);
+        .btn-main:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 30px 60px rgba(255, 102, 178, 0.6);
         }
 
         /* Closet Scene */
@@ -150,87 +165,84 @@
             flex-direction: row;
         }
 
-        .closet-left {
-            flex: 1.5;
+        .studio-preview {
+            flex: 1.4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .doll-stage {
+            width: 90%;
+            height: 90%;
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 85%);
-            padding: 40px;
         }
 
-        .avatar-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .avatar-layer {
+        .clothing-layer {
             position: absolute;
             max-width: 95%;
             max-height: 100%;
             object-fit: contain;
             pointer-events: none;
-            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
+            transition: all 0.5s ease;
         }
 
-        /* Animation when equipping */
-        .equipping {
-            animation: popIcon 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .clothing-layer.animating {
+            animation: itemEquip 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes popIcon {
-            0% { transform: scale(0.8) translateY(-30px); opacity: 0; }
-            50% { transform: scale(1.1); }
+        @keyframes itemEquip {
+            0% { transform: scale(0.5) translateY(-50px); opacity: 0; }
             100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
-        .closet-right {
-            width: 500px;
+        /* Editor Panel */
+        .editor-panel {
+            width: 520px;
             background: var(--glass);
             border-left: 2px solid white;
             display: flex;
             flex-direction: column;
-            box-shadow: -20px 0 50px rgba(0,0,0,0.1);
+            box-shadow: -20px 0 60px rgba(0,0,0,0.1);
         }
 
-        .tabs {
+        .category-tabs {
             display: flex;
-            padding: 25px;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.4);
+            padding: 30px;
+            gap: 15px;
             overflow-x: auto;
             scrollbar-width: none;
+            background: rgba(0,0,0,0.02);
         }
-        .tabs::-webkit-scrollbar { display: none; }
+        .category-tabs::-webkit-scrollbar { display: none; }
 
-        .tab {
-            padding: 16px 28px;
-            border: none;
+        .cat-btn {
             background: white;
+            border: 1px solid #eee;
+            padding: 18px 25px;
+            border-radius: 25px;
             cursor: pointer;
             font-weight: 800;
-            border-radius: 22px;
-            transition: all 0.3s;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             white-space: nowrap;
-            color: #aaa;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: var(--transition);
+            color: #999;
         }
 
-        .tab.active {
+        .cat-btn.active {
             background: var(--primary-dark);
             color: white;
-            box-shadow: 0 12px 25px rgba(255, 153, 204, 0.4);
-            transform: translateY(-4px);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 102, 178, 0.3);
+            border-color: transparent;
         }
 
-        .inventory-grid {
+        .inventory {
             flex: 1;
             padding: 35px;
             display: grid;
@@ -240,80 +252,56 @@
             align-content: start;
         }
 
-        .item-card {
+        .item {
             background: white;
-            border-radius: 30px;
+            border-radius: 35px;
             aspect-ratio: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: var(--transition);
             border: 4px solid transparent;
             position: relative;
-            padding: 12px;
+            padding: 15px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
 
-        .item-card:hover {
-            transform: translateY(-8px) scale(1.08);
-            box-shadow: 0 18px 35px rgba(0,0,0,0.1);
+        .item:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
-        .item-card.selected {
+        .item.selected {
             border-color: var(--primary-dark);
-            background: #fff8fb;
+            background: #fffcfd;
         }
 
-        .item-card img {
+        .item img {
             width: 100%;
             height: 100%;
             object-fit: contain;
         }
 
-        .item-card.locked::after {
-            content: '💎';
+        .item-lock {
             position: absolute;
             top: 15px;
             right: 15px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
-        .item-price {
-            font-size: 1rem;
+        .price-tag {
+            font-size: 0.9rem;
             font-weight: 800;
             color: var(--gold);
-            margin-top: 8px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            margin-top: 5px;
         }
 
-        .action-bar {
-            display: flex;
-            padding: 0 35px;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .btn-action {
-            flex: 1;
-            padding: 14px;
-            border-radius: 18px;
-            border: 2px solid white;
+        .editor-footer {
+            padding: 40px;
             background: white;
-            cursor: pointer;
-            font-weight: 800;
-            font-size: 1rem;
-            transition: all 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-        .btn-action:hover { background: #fdfdfd; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-
-        .closet-footer {
-            padding: 35px;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -321,102 +309,74 @@
 
         .btn-finish {
             width: 100%;
-            padding: 24px;
-            border-radius: 30px;
+            padding: 25px;
+            border-radius: 35px;
             border: none;
-            background: linear-gradient(90deg, #cc99ff, #ff99cc);
+            background: var(--dark);
             color: white;
             font-weight: 900;
             font-size: 1.5rem;
             cursor: pointer;
-            transition: all 0.4s;
-            box-shadow: 0 20px 40px rgba(255, 102, 178, 0.5);
+            transition: var(--transition);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             text-transform: uppercase;
-            letter-spacing: 2px;
         }
 
         .btn-finish:hover {
-            box-shadow: 0 25px 50px rgba(255, 102, 178, 0.6);
-            transform: scale(1.03) translateY(-2px);
+            transform: translateY(-5px);
+            background: #333;
         }
 
-        /* Photo Scene */
-        #scene-photo {
+        /* Gallery Scene */
+        #scene-gallery {
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 90%;
+            padding: 50px 0;
+        }
+
+        .gallery-card {
+            background: white;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        /* Post Scene */
+        #scene-post {
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: white;
         }
 
-        .photo-wrapper {
-            position: relative;
-            padding: 50px;
-            background: #fff;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.2);
-            border-radius: 50px;
-        }
-
-        .photo-canvas {
-            width: 550px;
-            height: 750px;
-            background: linear-gradient(135deg, #fff5f8 0%, #f3e5f5 100%);
-            border-radius: 25px;
+        .photo-result {
+            width: 480px;
+            height: 640px;
+            background: linear-gradient(135deg, white, #f9f9f9);
+            border-radius: 30px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.2);
             position: relative;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 12px solid white;
+            border: 15px solid white;
         }
 
-        .social-ui {
-            position: absolute;
-            bottom: 40px;
-            left: 40px;
-            display: flex;
-            gap: 30px;
-            z-index: 1000;
-        }
-
-        .social-btn {
-            background: white;
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.2rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        .social-btn:hover { transform: scale(1.2) rotate(10deg); }
-
-        .btn-post {
-            margin-top: 50px;
-            padding: 24px 120px;
-            background: var(--dark);
-            color: white;
-            border: none;
-            border-radius: 60px;
-            font-weight: 900;
-            font-size: 1.6rem;
-            cursor: pointer;
-            transition: all 0.4s;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-            text-transform: uppercase;
-        }
-
-        /* Modal */
-        #modal-reward {
+        /* Modals */
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             z-index: 2000;
             display: none;
             justify-content: center;
@@ -425,261 +385,295 @@
 
         .modal-content {
             background: white;
-            padding: 70px;
+            padding: 60px;
             border-radius: 60px;
             text-align: center;
-            max-width: 550px;
+            max-width: 500px;
             width: 90%;
-            animation: popUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 50px 120px rgba(0,0,0,0.5);
+            animation: modalPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes popUp {
-            from { transform: scale(0.5); opacity: 0; }
+        @keyframes modalPop {
+            from { transform: scale(0.4); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
 
-        .score-box {
-            font-size: 6rem;
-            font-weight: 1000;
-            color: #ff3385;
-            margin: 30px 0;
-            text-shadow: 5px 5px 0 rgba(255, 153, 204, 0.2);
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            z-index: 3000;
+            display: none;
+            animation: toastUp 0.3s ease;
         }
 
-        /* Responsive */
-        @media (max-width: 1000px) {
-            #game-container { border-radius: 0; height: 100vh; max-height: none; }
-            .closet-right { width: 450px; }
-        }
-
-        @media (max-width: 850px) {
-            #scene-closet { flex-direction: column; }
-            .closet-left { height: 55%; padding: 20px; }
-            .closet-right {
-                width: 100%;
-                height: 45%;
-                border-left: none;
-                border-top: 2px solid white;
-            }
-            .inventory-grid { grid-template-columns: repeat(4, 1fr); padding: 20px; }
-            h1 { font-size: 3.5rem; }
+        @keyframes toastUp {
+            from { transform: translate(-50%, 50px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
         }
     </style>
 </head>
 <body>
 
     <div id="game-container">
-        <!-- HUD -->
-        <div id="hud">
-            <span class="coin-icon">✨</span>
-            <span id="score-display">100</span>
-        </div>
+        <!-- HUD Overlay -->
+        <nav id="navbar">
+            <div class="logo">POP STAR Royale</div>
+            <div class="stats">
+                <div class="stat-badge">✨ <span id="val-points">100</span></div>
+                <div class="stat-badge" style="cursor:pointer;" onclick="changeScene('scene-gallery')">🖼️ <span id="val-looks">0</span></div>
+            </div>
+        </nav>
 
         <!-- Menu Scene -->
         <div id="scene-menu" class="scene active">
-            <div class="title-card">
-                <h1>Pop Star</h1>
-                <p style="margin-bottom: 40px; font-weight: 700; font-size: 1.3rem; color: #666; letter-spacing: 0.5px;">Crie seu ícone fashion e domine o mundo!</p>
-                <button class="btn-play" onclick="changeScene('scene-closet')">Entrar no Closet</button>
+            <div class="hero-box">
+                <h1 style="font-size: 6rem; margin-bottom: 10px;">Veste e Brilha</h1>
+                <p style="font-size: 1.5rem; color: #666; margin-bottom: 50px;">O jogo de moda mais exclusivo do GitHub</p>
+                <button class="btn-main" onclick="changeScene('scene-closet')">Entrar no Estúdio</button>
             </div>
         </div>
 
         <!-- Closet Scene -->
         <div id="scene-closet" class="scene">
-            <div class="closet-left">
-                <div class="avatar-container" id="closet-avatar">
-                    <!-- Doll Base -->
-                    <img src="assets/avatar_base.png" class="avatar-layer" style="z-index: 1;" id="base-body">
-                    
-                    <!-- Dressing Layers -->
-                    <img id="layer-shoes" src="" class="avatar-layer" style="z-index: 3; display:none;">
-                    <img id="layer-dress" src="" class="avatar-layer" style="z-index: 5; display:none;">
-                    <img id="layer-hair" src="" class="avatar-layer" style="z-index: 10; display:none;">
-                    <img id="layer-acc" src="" class="avatar-layer" style="z-index: 15; display:none;">
+            <div class="studio-preview">
+                <div class="doll-stage" id="main-doll">
+                    <img src="assets/avatar_base.png" class="clothing-layer" style="z-index: 1;">
+                    <img id="layer-shoes" src="" class="clothing-layer" style="z-index: 10; display:none;">
+                    <img id="layer-dress" src="" class="clothing-layer" style="z-index: 20; display:none;">
+                    <img id="layer-hair" src="" class="clothing-layer" style="z-index: 30; display:none;">
+                    <img id="layer-acc" src="" class="clothing-layer" style="z-index: 40; display:none;">
                 </div>
             </div>
-            <div class="closet-right">
-                <div class="tabs">
-                    <button class="tab active" onclick="switchTab('hair')">CABELO</button>
-                    <button class="tab" onclick="switchTab('dress')">ROUPAS</button>
-                    <button class="tab" onclick="switchTab('shoes')">SAPATOS</button>
-                    <button class="tab" onclick="switchTab('acc')">ACESSÓRIOS</button>
-                </div>
-                
-                <div class="inventory-grid" id="inventory-grid"></div>
-
-                <div class="action-bar">
-                    <button class="btn-action" onclick="randomizeLook()">🎲 Aleatório</button>
-                    <button class="btn-action" onclick="clearLook()">🔄 Limpar</button>
+            
+            <div class="editor-panel">
+                <div class="category-tabs" id="tabs-container">
+                    <button class="cat-btn active" onclick="switchCategory('hair')">CABELO</button>
+                    <button class="cat-btn" onclick="switchCategory('dress')">LOOKS</button>
+                    <button class="cat-btn" onclick="switchCategory('shoes')">SOULEIRS</button>
+                    <button class="cat-btn" onclick="switchCategory('acc')">DETALHES</button>
                 </div>
 
-                <div class="closet-footer">
-                    <button class="btn-finish" onclick="finalizeLook()">Finalizar Look</button>
+                <div class="inventory" id="inventory-grid">
+                    <!-- Injected by JS -->
+                </div>
+
+                <div class="editor-footer">
+                    <div style="display:flex; gap:10px;">
+                        <button class="cat-btn" style="flex:1" onclick="randomize()">🎲 Random</button>
+                        <button class="cat-btn" style="flex:1" onclick="resetDoll()">🔄 Limpar</button>
+                    </div>
+                    <button class="btn-finish" onclick="saveAndPost()">Publicar Estilo</button>
                 </div>
             </div>
         </div>
 
-        <!-- Photo Scene -->
-        <div id="scene-photo" class="scene">
-            <div class="photo-wrapper">
-                <div class="photo-canvas" id="photo-canvas">
-                    <!-- Photo Content Injected by JS -->
-                    <div class="social-ui">
-                        <div class="social-btn">💖</div>
-                        <div class="social-btn">💬</div>
-                        <div class="social-btn">✨</div>
-                    </div>
-                </div>
+        <!-- Gallery Scene -->
+        <div id="scene-gallery" class="scene">
+            <h2 style="font-size: 3rem; margin-top: 40px; font-weight: 900;">Minha Coleção</h2>
+            <button class="cat-btn" style="margin-top: 20px;" onclick="changeScene('scene-closet')">Voltar ao Estúdio</button>
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Saved looks here -->
             </div>
-            <button class="btn-post" onclick="postLook()">Postar na Web</button>
-            <button class="btn-back" onclick="changeScene('scene-closet')" style="margin-top: 15px; background: transparent; border: none; cursor: pointer; color: #999; font-weight: 800; text-transform: uppercase;">Ajustar Estilo</button>
+        </div>
+
+        <!-- Post Results Scene -->
+        <div id="scene-post" class="scene">
+            <div class="photo-result" id="photo-canvas">
+                <!-- Result cloned here -->
+            </div>
+            <button class="btn-main" style="margin-top: 50px;" onclick="changeScene('scene-closet')">Novo Look</button>
         </div>
     </div>
 
     <!-- Reward Modal -->
-    <div id="modal-reward">
+    <div id="modal-reward" class="modal">
         <div class="modal-content">
-            <h2 style="font-size: 3rem; margin-bottom: 20px;">Sucesso Viral! 🚀</h2>
-            <div class="score-box" id="fashion-points">+0</div>
-            <p style="font-weight: 900; color: #333; text-transform: uppercase; letter-spacing: 3px;">Fashion Points</p>
-            <button class="btn-play" style="margin-top: 45px; width: 100%;" onclick="closeModal()">Pegar Recompensa</button>
+            <h2 style="font-size: 3rem; margin-bottom: 20px;">Vogue Viral! 💖</h2>
+            <p style="font-size: 1.2rem; color: #777;">Sua postagem quebrou o feed!</p>
+            <div style="font-size: 6rem; font-weight: 950; color: var(--primary-dark);" id="reward-val">+0</div>
+            <p style="font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">Pontos Ganhos</p>
+            <button class="btn-main" style="margin-top: 40px; width: 100%;" onclick="closeModal()">Continuar</button>
         </div>
     </div>
 
+    <div id="toast">Ficou maravilhoso! ✨</div>
+
     <script>
-        const state = {
-            points: parseInt(localStorage.getItem('pop_star_points')) || 100,
-            look: { hair: null, dress: null, shoes: null, acc: null },
-            tab: 'hair'
+        // Engine State
+        const App = {
+            points: parseInt(localStorage.getItem('psr_points')) || 100,
+            looksCount: parseInt(localStorage.getItem('psr_looks_count')) || 0,
+            gallery: JSON.parse(localStorage.getItem('psr_gallery')) || [],
+            current: { hair: null, dress: null, shoes: null, acc: null },
+            activeCat: 'hair'
         };
 
-        const db = {
+        const Database = {
             hair: [
-                { id: 'h1', name: 'Wave Pink', src: 'assets/hair_pink.png', price: 0 },
-                { id: 'h2', name: 'Golden Long', src: 'assets/hair_blonde.png', price: 60 },
-                { id: 'h3', name: 'Brunette Bun', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%234b2c12"/><rect x="30" y="60" width="40" height="40" fill="%234b2c12"/></svg>', price: 100 }
+                { id: 'h1', name: 'Wave', src: 'assets/hair_pink.png', price: 0 },
+                { id: 'h2', name: 'Gold', src: 'assets/hair_blonde.png', price: 50 },
+                { id: 'h3', name: 'Noir', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,50 Q20,10 50,10 Q80,10 80,50 L80,70 L20,70 Z" fill="%23222"/></svg>', price: 100 },
+                { id: 'h4', name: 'Pixie', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,40 Q50,10 70,40 L70,50 L30,50 Z" fill="%23ff66b2"/></svg>', price: 80 }
             ],
             dress: [
-                { id: 'd1', name: 'Ruby Gown', src: 'assets/dress_glamour.png', price: 0 },
-                { id: 'd2', name: 'Azure Dream', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,20 L70,20 L80,100 L20,100 Z" fill="%2300ced1"/></svg>', price: 180 }
+                { id: 'd1', name: 'Gown', src: 'assets/dress_glamour.png', price: 0 },
+                { id: 'd2', name: 'Cyan', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150"><path d="M30,30 L70,30 L85,150 L15,150 Z" fill="%2300ced1"/></svg>', price: 150 },
+                { id: 'd3', name: 'Rose', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150"><path d="M20,20 Q50,0 80,20 L90,150 L10,150 Z" fill="%23ff99cc"/></svg>', price: 200 }
             ],
             shoes: [
-                { id: 's1', name: 'Glass Heels', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,80 L40,80 L50,100 L10,100 Z" fill="%23eee"/></svg>', price: 0 }
+                { id: 's1', name: 'Glass', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path d="M20,10 L40,10 L50,50 L10,50 Z" fill="%23eee"/></svg>', price: 0 },
+                { id: 's2', name: 'Rubi', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path d="M20,10 L40,10 L50,50 L10,50 Z" fill="%23ff3385"/></svg>', price: 120 }
             ],
             acc: [
-                { id: 'a1', name: 'Tiara', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,30 L80,30 L50,10 Z" fill="%23ffd700"/></svg>', price: 200 }
+                { id: 'a1', name: 'Tiara', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path d="M10,40 L90,40 L50,0 Z" fill="%23ffd700"/></svg>', price: 300 }
             ]
         };
 
-        function updateUI() {
-            document.getElementById('score-display').innerText = state.points;
-            localStorage.setItem('pop_star_points', state.points);
+        // Core Functions
+        function sync() {
+            document.getElementById('val-points').innerText = App.points;
+            document.getElementById('val-looks').innerText = App.looksCount;
+            localStorage.setItem('psr_points', App.points);
+            localStorage.setItem('psr_looks_count', App.looksCount);
+            localStorage.setItem('psr_gallery', JSON.stringify(App.gallery));
         }
 
         function changeScene(s) {
-            document.querySelectorAll('.scene').forEach(sc => {
-                sc.classList.remove('active');
-                sc.style.display = 'none';
-            });
+            document.querySelectorAll('.scene').forEach(el => el.classList.remove('active'));
             const target = document.getElementById(s);
             target.style.display = 'flex';
             setTimeout(() => target.classList.add('active'), 50);
-            if(s === 'scene-closet') renderGrid();
+            if(s === 'scene-closet') renderInventory();
+            if(s === 'scene-gallery') renderGallery();
         }
 
-        function switchTab(t) {
-            state.tab = t;
-            document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+        function switchCategory(c) {
+            App.activeCat = c;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
-            renderGrid();
+            renderInventory();
         }
 
-        function renderGrid() {
+        function renderInventory() {
             const grid = document.getElementById('inventory-grid');
             grid.innerHTML = '';
-            db[state.tab].forEach(item => {
-                const card = document.createElement('div');
-                card.className = `item-card ${state.points < item.price ? 'locked' : ''} ${state.look[state.tab] === item.id ? 'selected' : ''}`;
-                card.onclick = () => equip(item);
-                card.innerHTML = `<img src="${item.src}"><div class="item-price">${item.price > 0 ? item.price + ' ✨' : 'GRÁTIS'}</div>`;
-                grid.appendChild(card);
+            Database[App.activeCat].forEach(item => {
+                const div = document.createElement('div');
+                div.className = `item ${App.current[App.activeCat] === item.id ? 'selected' : ''} ${App.points < item.price ? 'locked' : ''}`;
+                div.onclick = () => equip(item);
+                div.innerHTML = `
+                    <img src="${item.src}">
+                    <div class="price-tag">${item.price > 0 ? '✨ ' + item.price : 'FREE'}</div>
+                    ${App.points < item.price ? '<div class="item-lock">🔒</div>' : ''}
+                `;
+                grid.appendChild(div);
             });
         }
 
         function equip(item) {
-            if (state.points < item.price) {
-                alert('Você precisa de mais fashion points! ✨');
+            if (App.points < item.price) {
+                showToast("Pontos insuficientes! ✨");
                 return;
             }
-            
-            const layer = document.getElementById(`layer-${state.tab}`);
-            
-            // Toggle Logic: If clicking the same item, unequip it
-            if (state.look[state.tab] === item.id) {
-                state.look[state.tab] = null;
+
+            const layer = document.getElementById(`layer-${App.activeCat}`);
+            if (App.current[App.activeCat] === item.id) {
+                App.current[App.activeCat] = null;
                 layer.style.display = 'none';
                 layer.src = '';
             } else {
-                state.look[state.tab] = item.id;
+                App.current[App.activeCat] = item.id;
                 layer.src = item.src;
                 layer.style.display = 'block';
-                
-                // Animation
-                layer.classList.remove('equipping');
+                layer.classList.remove('animating');
                 void layer.offsetWidth;
-                layer.classList.add('equipping');
+                layer.classList.add('animating');
             }
+            renderInventory();
+        }
+
+        function resetDoll() {
+            for (let cat in App.current) {
+                App.current[cat] = null;
+                const l = document.getElementById(`layer-${cat}`);
+                l.style.display = 'none';
+                l.src = '';
+            }
+            renderInventory();
+        }
+
+        function randomize() {
+            for (let cat in Database) {
+                const aff = Database[cat].filter(i => i.price <= App.points);
+                const rand = aff[Math.floor(Math.random() * aff.length)];
+                App.current[cat] = rand.id;
+                const l = document.getElementById(`layer-${cat}`);
+                l.src = rand.src;
+                l.style.display = 'block';
+            }
+            renderInventory();
+        }
+
+        function saveAndPost() {
+            if (!App.current.hair && !App.current.dress) {
+                showToast("Vista a boneca primeiro! 👗");
+                return;
+            }
+
+            // Save to Gallery
+            const lookData = {...App.current};
+            App.gallery.unshift(lookData);
+            if(App.gallery.length > 9) App.gallery.pop();
+            App.looksCount++;
             
-            renderGrid();
-        }
-
-        function randomizeLook() {
-            for (const cat in db) {
-                const affordable = db[cat].filter(i => i.price <= state.points);
-                const rand = affordable[Math.floor(Math.random() * affordable.length)];
-                state.look[cat] = rand.id;
-                const layer = document.getElementById(`layer-${cat}`);
-                layer.src = rand.src;
-                layer.style.display = 'block';
-            }
-            renderGrid();
-        }
-
-        function clearLook() {
-            for (const cat in state.look) {
-                state.look[cat] = null;
-                document.getElementById(`layer-${cat}`).style.display = 'none';
-            }
-            renderGrid();
-        }
-
-        function finalizeLook() {
+            // Render Result
             const canvas = document.getElementById('photo-canvas');
-            const avatar = document.getElementById('closet-avatar');
-            const prev = canvas.querySelector('.avatar-container');
-            if (prev) prev.remove();
+            const source = document.getElementById('main-doll');
+            canvas.innerHTML = '';
+            canvas.appendChild(source.cloneNode(true));
             
-            const clone = avatar.cloneNode(true);
-            clone.style.transform = 'scale(0.9)';
-            canvas.appendChild(clone);
-            changeScene('scene-photo');
+            // Reward
+            const reward = Math.floor(Math.random() * 200) + 100;
+            App.points += reward;
+            
+            sync();
+            document.getElementById('reward-val').innerText = `+${reward}`;
+            document.getElementById('modal-reward').style.display = 'flex';
         }
 
-        function postLook() {
-            const reward = Math.floor(Math.random() * 300) + 100;
-            state.points += reward;
-            updateUI();
-            document.getElementById('fashion-points').innerText = `+${reward}`;
-            document.getElementById('modal-reward').style.display = 'flex';
+        function renderGallery() {
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+            App.gallery.forEach(look => {
+                const card = document.createElement('div');
+                card.className = 'gallery-card';
+                // Simplified preview
+                card.innerHTML = `<div style="padding:20px; font-weight:800; color:#9933ff;">LOOK #${Math.floor(Math.random()*1000)}</div>`;
+                grid.appendChild(card);
+            });
         }
 
         function closeModal() {
             document.getElementById('modal-reward').style.display = 'none';
-            changeScene('scene-closet');
+            changeScene('scene-post');
         }
 
-        updateUI();
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.innerText = m;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        sync();
     </script>
 </body>
 </html>
