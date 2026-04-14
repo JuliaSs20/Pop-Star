@@ -13,7 +13,7 @@
             --accent: #ccffff;
             --gold: #ffd700;
             --dark: #2d3436;
-            --glass: rgba(255, 255, 255, 0.8);
+            --glass: rgba(255, 255, 255, 0.85);
             --shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
         }
 
@@ -40,11 +40,11 @@
             height: 95vh;
             max-height: 850px;
             background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             border-radius: 40px;
             position: relative;
             box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 2px solid white;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -106,7 +106,7 @@
             text-align: center;
             box-shadow: var(--shadow);
             animation: float 5s ease-in-out infinite;
-            border: 1px solid white;
+            border: 2px solid white;
         }
 
         @keyframes float {
@@ -115,13 +115,13 @@
         }
 
         h1 {
-            font-size: 6rem;
+            font-size: 6.5rem;
             background: linear-gradient(135deg, #ff4d94, #9933ff, #4d94ff);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 25px;
-            letter-spacing: -4px;
+            letter-spacing: -5px;
             font-weight: 900;
             line-height: 1;
         }
@@ -141,7 +141,7 @@
         }
 
         .btn-play:hover {
-            transform: scale(1.1) rotate(-1deg);
+            transform: scale(1.1) rotate(-2deg);
             box-shadow: 0 20px 50px rgba(255, 102, 178, 0.7);
         }
 
@@ -156,7 +156,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 85%);
+            background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 85%);
             padding: 40px;
         }
 
@@ -167,7 +167,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            perspective: 1000px;
         }
 
         .avatar-layer {
@@ -177,16 +176,18 @@
             object-fit: contain;
             pointer-events: none;
             filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .avatar-layer.equipping {
-            animation: equipEffect 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* Animation when equipping */
+        .equipping {
+            animation: popIcon 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes equipEffect {
-            0% { transform: scale(1.2) translateY(-20px); opacity: 0; filter: brightness(2) blur(10px); }
-            100% { transform: scale(1) translateY(0); opacity: 1; filter: brightness(1) blur(0); }
+        @keyframes popIcon {
+            0% { transform: scale(0.8) translateY(-30px); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         .closet-right {
@@ -202,7 +203,7 @@
             display: flex;
             padding: 25px;
             gap: 12px;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.4);
             overflow-x: auto;
             scrollbar-width: none;
         }
@@ -218,9 +219,8 @@
             transition: all 0.3s;
             font-size: 0.95rem;
             white-space: nowrap;
-            color: #999;
+            color: #aaa;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border: 1px solid #eee;
         }
 
         .tab.active {
@@ -228,7 +228,6 @@
             color: white;
             box-shadow: 0 12px 25px rgba(255, 153, 204, 0.4);
             transform: translateY(-4px);
-            border-color: transparent;
         }
 
         .inventory-grid {
@@ -236,7 +235,7 @@
             padding: 35px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
+            gap: 25px;
             overflow-y: auto;
             align-content: start;
         }
@@ -251,20 +250,20 @@
             align-items: center;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 5px solid transparent;
+            border: 4px solid transparent;
             position: relative;
-            padding: 15px;
-            box-shadow: 0 12px 25px rgba(0,0,0,0.06);
+            padding: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
 
         .item-card:hover {
-            transform: translateY(-10px) scale(1.1);
-            box-shadow: 0 20px 45px rgba(0,0,0,0.15);
+            transform: translateY(-8px) scale(1.08);
+            box-shadow: 0 18px 35px rgba(0,0,0,0.1);
         }
 
         .item-card.selected {
             border-color: var(--primary-dark);
-            background: #fffcfd;
+            background: #fff8fb;
         }
 
         .item-card img {
@@ -281,10 +280,6 @@
             font-size: 1.1rem;
         }
 
-        .item-card.locked img {
-            filter: grayscale(1) opacity(0.5);
-        }
-
         .item-price {
             font-size: 1rem;
             font-weight: 800;
@@ -296,7 +291,7 @@
         .action-bar {
             display: flex;
             padding: 0 35px;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 20px;
         }
 
@@ -314,9 +309,8 @@
             justify-content: center;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-        .btn-action:hover { background: #fefefe; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .btn-action:hover { background: #fdfdfd; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
         .closet-footer {
             padding: 35px;
@@ -330,7 +324,7 @@
             padding: 24px;
             border-radius: 30px;
             border: none;
-            background: linear-gradient(90deg, #9933ff, #ff66b2);
+            background: linear-gradient(90deg, #cc99ff, #ff99cc);
             color: white;
             font-weight: 900;
             font-size: 1.5rem;
@@ -360,7 +354,6 @@
             background: #fff;
             box-shadow: 0 50px 100px rgba(0,0,0,0.2);
             border-radius: 50px;
-            border: 5px solid #f9f9f9;
         }
 
         .photo-canvas {
@@ -413,12 +406,6 @@
             transition: all 0.4s;
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);
             text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-post:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
         }
 
         /* Modal */
@@ -428,7 +415,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.75);
+            background: rgba(0,0,0,0.8);
             backdrop-filter: blur(10px);
             z-index: 2000;
             display: none;
@@ -443,13 +430,12 @@
             text-align: center;
             max-width: 550px;
             width: 90%;
-            animation: bounceIn 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: popUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 50px 120px rgba(0,0,0,0.5);
         }
 
-        @keyframes bounceIn {
-            from { transform: scale(0); opacity: 0; }
-            70% { transform: scale(1.1); }
+        @keyframes popUp {
+            from { transform: scale(0.5); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
 
@@ -462,7 +448,7 @@
         }
 
         /* Responsive */
-        @media (max-width: 1100px) {
+        @media (max-width: 1000px) {
             #game-container { border-radius: 0; height: 100vh; max-height: none; }
             .closet-right { width: 450px; }
         }
@@ -494,7 +480,7 @@
         <div id="scene-menu" class="scene active">
             <div class="title-card">
                 <h1>Pop Star</h1>
-                <p style="margin-bottom: 40px; font-weight: 700; font-size: 1.3rem; color: #555; letter-spacing: 0.5px;">Vista a sua personagem para o sucesso mundial!</p>
+                <p style="margin-bottom: 40px; font-weight: 700; font-size: 1.3rem; color: #666; letter-spacing: 0.5px;">Crie seu ícone fashion e domine o mundo!</p>
                 <button class="btn-play" onclick="changeScene('scene-closet')">Entrar no Closet</button>
             </div>
         </div>
@@ -511,17 +497,14 @@
                     <img id="layer-dress" src="" class="avatar-layer" style="z-index: 5; display:none;">
                     <img id="layer-hair" src="" class="avatar-layer" style="z-index: 10; display:none;">
                     <img id="layer-acc" src="" class="avatar-layer" style="z-index: 15; display:none;">
-                    
-                    <!-- Sparkle / Poof Effect Layer -->
-                    <div id="equip-vfx" style="position:absolute; width:100%; height:100%; z-index:100; pointer-events:none;"></div>
                 </div>
             </div>
             <div class="closet-right">
                 <div class="tabs">
                     <button class="tab active" onclick="switchTab('hair')">CABELO</button>
-                    <button class="tab" onclick="switchTab('dress')">VESTIDOS</button>
+                    <button class="tab" onclick="switchTab('dress')">ROUPAS</button>
                     <button class="tab" onclick="switchTab('shoes')">SAPATOS</button>
-                    <button class="tab" onclick="switchTab('acc')">BODY ACC</button>
+                    <button class="tab" onclick="switchTab('acc')">ACESSÓRIOS</button>
                 </div>
                 
                 <div class="inventory-grid" id="inventory-grid"></div>
@@ -549,7 +532,7 @@
                     </div>
                 </div>
             </div>
-            <button class="btn-post" onclick="postLook()">Publicar na Web</button>
+            <button class="btn-post" onclick="postLook()">Postar na Web</button>
             <button class="btn-back" onclick="changeScene('scene-closet')" style="margin-top: 15px; background: transparent; border: none; cursor: pointer; color: #999; font-weight: 800; text-transform: uppercase;">Ajustar Estilo</button>
         </div>
     </div>
@@ -557,11 +540,10 @@
     <!-- Reward Modal -->
     <div id="modal-reward">
         <div class="modal-content">
-            <h2 style="font-size: 3rem; margin-bottom: 10px;">Sucesso Viral! 🚀</h2>
-            <p style="color: #666; font-size: 1.3rem;">O mundo parou para ver seu estilo.</p>
+            <h2 style="font-size: 3rem; margin-bottom: 20px;">Sucesso Viral! 🚀</h2>
             <div class="score-box" id="fashion-points">+0</div>
             <p style="font-weight: 900; color: #333; text-transform: uppercase; letter-spacing: 3px;">Fashion Points</p>
-            <button class="btn-play" style="margin-top: 45px; width: 100%;" onclick="closeModal()">Continuar</button>
+            <button class="btn-play" style="margin-top: 45px; width: 100%;" onclick="closeModal()">Pegar Recompensa</button>
         </div>
     </div>
 
@@ -575,24 +557,18 @@
         const db = {
             hair: [
                 { id: 'h1', name: 'Wave Pink', src: 'assets/hair_pink.png', price: 0 },
-                { id: 'h2', name: 'Golden Sun', src: 'assets/hair_blonde.png', price: 60 },
-                { id: 'h3', name: 'Black Velvet', src: 'https://via.placeholder.com/600x800/222/fff?text=Cabelo+Escuro', price: 100 },
-                { id: 'h4', name: 'Neon Blue', src: 'https://via.placeholder.com/600x800/00ffff/333?text=Neon+Blue', price: 200 }
+                { id: 'h2', name: 'Golden Long', src: 'assets/hair_blonde.png', price: 60 },
+                { id: 'h3', name: 'Brunette Bun', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%234b2c12"/><rect x="30" y="60" width="40" height="40" fill="%234b2c12"/></svg>', price: 100 }
             ],
             dress: [
-                { id: 'd1', name: 'Silver Gown', src: 'assets/dress_glamour.png', price: 0 },
-                { id: 'd2', name: 'Sunset Sparkle', src: 'https://via.placeholder.com/600x800/FF7F50/fff?text=Vestido+Longo', price: 180 },
-                { id: 'd3', name: 'Night Queen', src: 'https://via.placeholder.com/600x800/4B0082/fff?text=Dark+Gown', price: 250 },
-                { id: 'd4', name: 'Gold Leaf', src: 'https://via.placeholder.com/600x800/FFD700/333?text=Ouro+Puro', price: 400 }
+                { id: 'd1', name: 'Ruby Gown', src: 'assets/dress_glamour.png', price: 0 },
+                { id: 'd2', name: 'Azure Dream', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,20 L70,20 L80,100 L20,100 Z" fill="%2300ced1"/></svg>', price: 180 }
             ],
             shoes: [
-                { id: 's1', name: 'Glass Heels', src: 'https://via.placeholder.com/600x800/eee/333?text=Salto+Prata', price: 0 },
-                { id: 's2', name: 'Pink Diamond', src: 'https://via.placeholder.com/600x800/FF69B4/fff?text=Rose+Heels', price: 120 },
-                { id: 's3', name: 'Gold Majesty', src: 'https://via.placeholder.com/600x800/FFD700/333?text=Gold+Heels', price: 300 }
+                { id: 's1', name: 'Glass Heels', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,80 L40,80 L50,100 L10,100 Z" fill="%23eee"/></svg>', price: 0 }
             ],
             acc: [
-                { id: 'a1', name: 'Crown', src: 'https://via.placeholder.com/600x800/fff/333?text=Coroa', price: 500 },
-                { id: 'a2', name: 'Wings', src: 'https://via.placeholder.com/600x800/ccccff/333?text=Asas', price: 250 }
+                { id: 'a1', name: 'Tiara', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,30 L80,30 L50,10 Z" fill="%23ffd700"/></svg>', price: 200 }
             ]
         };
 
@@ -633,18 +609,27 @@
 
         function equip(item) {
             if (state.points < item.price) {
-                alert('Você precisa de mais pontos fashion! ✨');
+                alert('Você precisa de mais fashion points! ✨');
                 return;
             }
-            state.look[state.tab] = item.id;
+            
             const layer = document.getElementById(`layer-${state.tab}`);
             
-            // Visual Effect
-            layer.classList.remove('equipping');
-            void layer.offsetWidth; // Reset animation
-            layer.src = item.src;
-            layer.style.display = 'block';
-            layer.classList.add('equipping');
+            // Toggle Logic: If clicking the same item, unequip it
+            if (state.look[state.tab] === item.id) {
+                state.look[state.tab] = null;
+                layer.style.display = 'none';
+                layer.src = '';
+            } else {
+                state.look[state.tab] = item.id;
+                layer.src = item.src;
+                layer.style.display = 'block';
+                
+                // Animation
+                layer.classList.remove('equipping');
+                void layer.offsetWidth;
+                layer.classList.add('equipping');
+            }
             
             renderGrid();
         }
@@ -676,13 +661,13 @@
             if (prev) prev.remove();
             
             const clone = avatar.cloneNode(true);
-            clone.style.transform = 'scale(0.9)'; // Fit slightly better in photo
+            clone.style.transform = 'scale(0.9)';
             canvas.appendChild(clone);
             changeScene('scene-photo');
         }
 
         function postLook() {
-            const reward = Math.floor(Math.random() * 250) + 100;
+            const reward = Math.floor(Math.random() * 300) + 100;
             state.points += reward;
             updateUI();
             document.getElementById('fashion-points').innerText = `+${reward}`;
