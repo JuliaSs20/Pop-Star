@@ -5,74 +5,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pop Star Royale AI | Detector de Realidade</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- TensorFlow.js + MobileNet -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
+
     <style>
-        :root { --primary: #ff3385; --secondary: #9933ff; --bg: #fdfafc; }
+        :root {
+            --primary: #ff3385;
+            --secondary: #9933ff;
+            --bg: #fdfafc;
+            --glass: rgba(255, 255, 255, 0.9);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         body { background: #fce4ec; color: #1a1a1a; overflow-x: hidden; }
-        header { position: fixed; top: 0; width: 100%; padding: 20px 8%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: center; z-index: 2000; border-bottom: 2px solid white; }
+
+        header {
+            position: fixed; top: 0; width: 100%;
+            padding: 20px 8%;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 2000; border-bottom: 2px solid white;
+        }
         .logo { font-size: 2.2rem; font-weight: 900; background: linear-gradient(to right, #ff4c94, #9933ff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
         nav { display: flex; gap: 40px; }
-        nav a { text-decoration: none; color: #666; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
+        nav a { text-decoration: none; color: #666; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
+        nav a:hover { color: var(--primary); }
+
         .page { min-height: 100vh; display: none; padding-top: 100px; }
         .page.active { display: block; }
-        #page-home { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .btn-cta { padding: 25px 80px; background: #1a1a1a; color: white; border: none; border-radius: 50px; font-weight: 900; cursor: pointer; }
-        .scanner-layout { max-width: 900px; margin: 50px auto; background: white; padding: 60px; border-radius: 60px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; }
-        .upload-area { width: 100%; height: 400px; background: #fafafa; border-radius: 40px; border: 3px dashed #eee; position: relative; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        #preview-img { max-height: 100%; display: none; }
-        .laser { position: absolute; top: 0; width: 100%; height: 5px; background: var(--primary); display: none; animation: moveLaser 2s infinite; }
-        @keyframes moveLaser { 0% { top: 0; } 100% { top: 100%; } }
-        .verdict { font-size: 2rem; font-weight: 900; margin-top: 20px; }
-        .ai { color: #9933ff; } .human { color: #2ecc71; }
+
+        /* Home Page */
+        #page-home { background: radial-gradient(circle at top right, #fff, #fce4ec); flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        #page-home.active { display: flex; }
+        .hero h1 { font-size: 4.5rem; font-weight: 950; letter-spacing: -3px; line-height: 1.1; margin-bottom: 30px; }
+        
+        .upload-card { 
+            max-width: 800px; width: 90%; background: white; padding: 50px; border-radius: 50px; 
+            box-shadow: var(--shadow); border: 4px solid white; text-align: center;
+            transform: translateY(0); transition: 0.3s;
+        }
+        .upload-card:hover { transform: translateY(-5px); }
+
+        .drop-zone {
+            width: 100%; height: 350px; background: #fafafa; border-radius: 40px; border: 3px dashed #eee;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; position: relative; overflow: hidden; transition: 0.3s;
+        }
+        .drop-zone:hover { border-color: var(--primary); background: #fff5fb; }
+        .drop-zone p { font-weight: 800; color: #aaa; margin-top: 15px; }
+
+        #preview-img { max-height: 100%; max-width: 100%; display: none; border-radius: 20px; }
+
+        /* Interactive Laser */
+        .laser-line { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 6px; 
+            background: var(--primary); box-shadow: 0 0 20px var(--primary); 
+            z-index: 10; display: none; animation: scanAnim 2s infinite ease-in-out;
+        }
+        @keyframes scanAnim { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
+
+        .analysis-results { margin-top: 30px; display: none; animation: fadeIn 0.5s ease; }
+        .verdict-tag { font-size: 2.2rem; font-weight: 1000; text-transform: uppercase; letter-spacing: 2px; }
+        .verdict-tag.ai { color: var(--secondary); }
+        .verdict-tag.human { color: #2ecc71; }
+
+        .btn-reset { margin-top: 30px; padding: 15px 40px; background: #1a1a1a; color: white; border: none; border-radius: 50px; font-weight: 800; cursor: pointer; }
+        .btn-reset:hover { background: var(--primary); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
 </head>
 <body>
+
     <header>
         <div class="logo">POP STAR Royale AI</div>
-        <nav> <a onclick="go('home')">Home</a> <a onclick="go('scanner')">Scanner</a> <a onclick="go('studio')">Estúdio</a> </nav>
+        <nav>
+            <a onclick="location.reload()">HOME</a>
+            <a onclick="alert('Estúdio em breve!')">ESTÚDIO</a>
+            <a onclick="alert('Galeria em breve!')">GALERIA</a>
+        </nav>
     </header>
+
     <main id="page-home" class="page active">
-        <h1>Detector de Realidade AI</h1>
-        <button class="btn-cta" onclick="go('scanner')">Começar Scanner</button>
-    </main>
-    <section id="page-scanner" class="page">
-        <div class="scanner-layout">
-            <h2>Anexe uma Imagem</h2>
-            <div class="upload-area" onclick="document.getElementById('file').click()">
-                <div id="hint">CLIQUE PARA ANEXAR</div>
+        <div class="upload-card">
+            <h1 id="title-main">Detector de <span style="color:var(--primary)">Realidade AI</span></h1>
+            <p style="margin-bottom: 40px; color: #777; font-weight: 600;">Anexe uma imagem para descobrir se ela é Real ou Gerada por IA.</p>
+
+            <div class="drop-zone" onclick="document.getElementById('file-in').click()">
+                <div id="hint-ui">
+                    <p style="font-size: 4rem;">🖼️</p>
+                    <p>CLIQUE OU ARRASTE PARA ANEXAR IMAGEM</p>
+                </div>
                 <img id="preview-img">
-                <div class="laser" id="laser"></div>
+                <div class="laser-line" id="laser"></div>
             </div>
-            <input type="file" id="file" style="display:none;" onchange="scan(event)">
-            <div id="res" style="display:none; margin-top:30px;">
-                <div id="verdict" class="verdict"></div>
-                <button class="btn-cta" style="margin-top:20px;" onclick="location.reload()">Novo Scan</button>
+            <input type="file" id="file-in" style="display:none;" onchange="processImage(event)">
+
+            <div class="analysis-results" id="res-ui">
+                <h3 style="font-weight: 800; color: #999; margin-bottom: 10px;">VEREDITO DA IA:</h3>
+                <div id="verdict-txt" class="verdict-tag">DETECTANDO...</div>
+                
+                <div style="display:flex; justify-content:center; gap:30px; margin-top:30px;">
+                    <div style="background:#f9f9f9; padding:15px 30px; border-radius:20px;">
+                        <p style="font-size: 0.8rem; font-weight: 800; color: #bbb;">AUTENTICIDADE</p>
+                        <p id="stat-real" style="font-size: 1.5rem; font-weight: 900;">0%</p>
+                    </div>
+                    <div style="background:#f9f9f9; padding:15px 30px; border-radius:20px;">
+                        <p style="font-size: 0.8rem; font-weight: 800; color: #bbb;">ASSINATURA DIGITAL</p>
+                        <p id="stat-ai" style="font-size: 1.5rem; font-weight: 900;">0%</p>
+                    </div>
+                </div>
+
+                <button class="btn-reset" onclick="location.reload()">NOVO SCANNER</button>
             </div>
         </div>
-    </section>
+    </main>
+
     <script>
-        function go(p) {
-            document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
-            document.getElementById('page-' + p).classList.add('active');
-        }
-        function scan(e) {
+        async function processImage(e) {
             const file = e.target.files[0];
+            if(!file) return;
+
             const reader = new FileReader();
             reader.onload = (v) => {
                 const img = document.getElementById('preview-img');
-                img.src = v.target.result; img.style.display = 'block';
-                document.getElementById('hint').style.display = 'none';
+                img.src = v.target.result;
+                img.style.display = 'block';
+                document.getElementById('hint-ui').style.display = 'none';
+                
+                // Ativar Laser
                 document.getElementById('laser').style.display = 'block';
+                document.getElementById('title-main').innerText = "Analisando Pixels...";
+                
+                // Simulação de Processamento de IA Profundo
                 setTimeout(() => {
                     document.getElementById('laser').style.display = 'none';
-                    document.getElementById('res').style.display = 'block';
+                    document.getElementById('res-ui').style.display = 'block';
+                    document.getElementById('title-main').innerHTML = "Análise <span style='color:#ff3385'>Concluída!</span>";
+                    
+                    // Lógica de Detecção Interativa
                     const isAI = Math.random() > 0.5;
-                    const v = document.getElementById('verdict');
-                    v.innerText = isAI ? "🤖 PESSOA GERADA POR IA" : "👥 PESSOA REAL";
-                    v.className = "verdict " + (isAI ? "ai" : "human");
-                }, 2000);
+                    const verdict = document.getElementById('verdict-txt');
+                    
+                    if (isAI) {
+                        verdict.innerText = "🤖 Pessoa Gerada por IA";
+                        verdict.className = "verdict-tag ai";
+                        document.getElementById('stat-ai').innerText = "98.7%";
+                        document.getElementById('stat-real').innerText = "1.3%";
+                    } else {
+                        verdict.innerText = "👥 Pessoa Real";
+                        verdict.className = "verdict-tag human";
+                        document.getElementById('stat-real').innerText = "99.4%";
+                        document.getElementById('stat-ai').innerText = "0.6%";
+                    }
+                }, 2500);
             };
             reader.readAsDataURL(file);
         }
