@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pop Star AI | Fashion & Innovation</title>
+    <title>Pop Star Royale | Fashion Universe</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- TensorFlow.js for AI Scanner -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
     <style>
         :root {
-            --primary: #ff3385;
-            --secondary: #9933ff;
-            --bg-light: #fdfafc;
-            --bg-dark: #121212;
-            --glass: rgba(255, 255, 255, 0.95);
-            --shadow: 0 30px 100px rgba(0, 0, 0, 0.1);
-            --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary: #ffb3d9;
+            --primary-dark: #ff66b2;
+            --secondary: #d1b3ff;
+            --accent: #b3ffff;
+            --gold: #ffcc00;
+            --dark: #1a1a1a;
+            --glass: rgba(255, 255, 255, 0.9);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -24,423 +23,657 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Outfit', sans-serif;
+            user-select: none;
         }
 
         body {
-            background-color: var(--bg-light);
-            color: var(--bg-dark);
-            overflow-x: hidden;
-            scroll-behavior: smooth;
+            background: linear-gradient(135deg, #ffe6f2, #f3e6ff, #e6ffff);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* --- Website Header --- */
-        header {
-            position: fixed;
-            top: 0;
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #game-container {
             width: 100%;
-            padding: 20px 8%;
+            max-width: 1300px;
+            height: 96vh;
+            max-height: 900px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(30px);
+            border-radius: 50px;
+            position: relative;
+            box-shadow: var(--shadow);
+            border: 2px solid white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HUD & Navbar */
+        nav {
+            padding: 25px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            z-index: 2000;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            z-index: 1000;
         }
 
         .logo {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 900;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            letter-spacing: -2px;
+            background: linear-gradient(to right, #ff4d94, #9933ff);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -2px;
         }
 
-        nav ul {
+        .stats {
             display: flex;
-            list-style: none;
-            gap: 40px;
+            gap: 20px;
         }
 
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 700;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: color 0.3s;
-            cursor: pointer;
-        }
-        nav ul li a:hover { color: var(--primary); }
-
-        .btn-nav {
-            padding: 12px 25px;
-            background: var(--bg-dark);
-            color: white;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 800;
-            transition: var(--transition);
-        }
-        .btn-nav:hover { background: var(--primary); transform: translateY(-3px); }
-
-        /* --- Hero Section --- */
-        .page {
-            min-height: 100vh;
-            display: none;
-            padding-top: 100px;
-        }
-        .page.active { display: block; }
-
-        #home {
-            background: radial-gradient(circle at top right, #fff0f5, white 60%);
+        .stat-badge {
+            background: var(--glass);
+            padding: 10px 25px;
+            border-radius: 30px;
             display: flex;
             align-items: center;
-            padding: 100px 8%;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 2px solid white;
         }
 
-        #home.active { display: flex; }
-
-        .hero-text { flex: 1; }
-        .hero-text h1 { font-size: 5.5rem; line-height: 0.9; font-weight: 950; margin-bottom: 30px; letter-spacing: -4px; }
-        .hero-text p { font-size: 1.4rem; color: #666; margin-bottom: 50px; max-width: 600px; }
-
-        .hero-img { flex: 1; position: relative; display: flex; justify-content: flex-end; }
-        .hero-img img { width: 90%; border-radius: 40px; box-shadow: var(--shadow); }
-
-        /* --- AI Scanner Scene --- */
-        #scanner {
-            background: #fafafa;
-            padding: 100px 8%;
-            text-align: center;
-        }
-
-        .scanner-container {
-            max-width: 800px;
-            margin: 50px auto;
-            background: white;
-            padding: 50px;
-            border-radius: 40px;
-            box-shadow: var(--shadow);
-            border: 2px dashed #eee;
-        }
-
-        #upload-box {
+        /* Global Scenes */
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 300px;
-            background: #f9f9f9;
-            border-radius: 20px;
+            height: 100%;
+            display: none;
+            opacity: 0;
+            transform: scale(0.98);
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding-top: 100px;
+        }
+
+        .scene.active {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Menu Scene */
+        #scene-menu {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: url('assets/background.png') center/cover no-repeat;
+            padding-top: 0;
+        }
+
+        .hero-box {
+            background: var(--glass);
+            padding: 80px;
+            border-radius: 60px;
+            text-align: center;
+            border: 2px solid white;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+            animation: heroFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes heroFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .btn-main {
+            padding: 25px 80px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: white;
+            background: linear-gradient(135deg, #ff66b2, #9933ff);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 20px 40px rgba(255, 102, 178, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-main:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 30px 60px rgba(255, 102, 178, 0.6);
+        }
+
+        /* Closet Scene */
+        #scene-closet {
+            flex-direction: row;
+        }
+
+        .studio-preview {
+            flex: 1.4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .doll-stage {
+            width: 90%;
+            height: 90%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .clothing-layer {
+            position: absolute;
+            max-width: 95%;
+            max-height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
+            transition: all 0.5s ease;
+        }
+
+        .clothing-layer.animating {
+            animation: itemEquip 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes itemEquip {
+            0% { transform: scale(0.5) translateY(-50px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* Editor Panel */
+        .editor-panel {
+            width: 520px;
+            background: var(--glass);
+            border-left: 2px solid white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -20px 0 60px rgba(0,0,0,0.1);
+        }
+
+        .category-tabs {
+            display: flex;
+            padding: 30px;
+            gap: 15px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            background: rgba(0,0,0,0.02);
+        }
+        .category-tabs::-webkit-scrollbar { display: none; }
+
+        .cat-btn {
+            background: white;
+            border: 1px solid #eee;
+            padding: 18px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: var(--transition);
+            color: #999;
+        }
+
+        .cat-btn.active {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 102, 178, 0.3);
+            border-color: transparent;
+        }
+
+        .inventory {
+            flex: 1;
+            padding: 35px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            overflow-y: auto;
+            align-content: start;
+        }
+
+        .item {
+            background: white;
+            border-radius: 35px;
+            aspect-ratio: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: 0.3s;
-            overflow: hidden;
+            transition: var(--transition);
+            border: 4px solid transparent;
             position: relative;
-        }
-        #upload-box:hover { background: #f0f0f0; }
-        #upload-box img { max-height: 100%; }
-
-        .scan-results {
-            margin-top: 30px;
-            display: none;
-            animation: fadeIn 0.5s ease;
+            padding: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
 
-        .ai-badge {
-            display: inline-block;
-            padding: 10px 20px;
-            background: var(--secondary);
-            color: white;
-            border-radius: 30px;
+        .item:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .item.selected {
+            border-color: var(--primary-dark);
+            background: #fffcfd;
+        }
+
+        .item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .item-lock {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.2rem;
+        }
+
+        .price-tag {
+            font-size: 0.9rem;
             font-weight: 800;
-            margin: 10px;
+            color: var(--gold);
+            margin-top: 5px;
         }
 
-        /* --- Game Studio Scene --- */
-        #studio {
-            background: linear-gradient(135deg, #fce4ec, #f3e5f5);
+        .editor-footer {
+            padding: 40px;
+            background: white;
             display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .btn-finish {
+            width: 100%;
+            padding: 25px;
+            border-radius: 35px;
+            border: none;
+            background: var(--dark);
+            color: white;
+            font-weight: 900;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+        }
+
+        .btn-finish:hover {
+            transform: translateY(-5px);
+            background: #333;
+        }
+
+        /* Gallery Scene */
+        #scene-gallery {
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 90%;
+            padding: 50px 0;
+        }
+
+        .gallery-card {
+            background: white;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        /* Post Scene */
+        #scene-post {
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 0;
-            height: 100vh;
         }
 
-        .studio-container {
-            width: 95%;
-            height: 90%;
-            max-width: 1300px;
-            background: rgba(255,255,255,0.4);
-            backdrop-filter: blur(20px);
-            border-radius: 40px;
-            display: flex;
+        .photo-result {
+            width: 480px;
+            height: 640px;
+            background: linear-gradient(135deg, white, #f9f9f9);
+            border-radius: 30px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.2);
+            position: relative;
             overflow: hidden;
-            box-shadow: var(--shadow);
+            border: 15px solid white;
         }
 
-        /* (Reuse previous Closet styling but integrated) */
-        .closet-side { flex: 1; position: relative; background: radial-gradient(circle, #fff, transparent); }
-        .doll-view { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
-        .layer { position: absolute; max-height: 95%; pointer-events: none; }
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
 
-        .editor-side { width: 500px; background: var(--glass); display: flex; flex-direction: column; border-left: 2px solid white; }
-        .grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 30px; overflow-y: auto; }
-        .grid-item { background: white; border-radius: 30px; aspect-ratio: 1; cursor: pointer; padding: 10px; transition: 0.3s; border: 3px solid transparent; }
-        .grid-item.active { border-color: var(--primary); }
-        .grid-item img { width: 100%; height: 100%; object-fit: contain; }
+        .modal-content {
+            background: white;
+            padding: 60px;
+            border-radius: 60px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: modalPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-        /* --- Footer --- */
-        footer {
-            padding: 100px 8%;
-            background: #111;
+        @keyframes modalPop {
+            from { transform: scale(0.4); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
             color: white;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 50px;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            z-index: 3000;
+            display: none;
+            animation: toastUp 0.3s ease;
         }
 
-        .footer-col h4 { font-size: 1.2rem; margin-bottom: 25px; }
-        .footer-col p { color: #888; line-height: 1.8; }
-        .footer-col ul { list-style: none; }
-        .footer-col ul li { margin-bottom: 15px; color: #888; cursor: pointer; }
-        .footer-col ul li:hover { color: white; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
+        @keyframes toastUp {
+            from { transform: translate(-50%, 50px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">POP STAR.AI</div>
-        <nav>
-            <ul>
-                <li><a onclick="showPage('home')">Home</a></li>
-                <li><a onclick="showPage('scanner')">Scanner AI</a></li>
-                <li><a onclick="showPage('studio')">Estúdio</a></li>
-                <li><a onclick="showPage('gallery')">Galeria</a></li>
-            </ul>
+    <div id="game-container">
+        <!-- HUD Overlay -->
+        <nav id="navbar">
+            <div class="logo">POP STAR Royale</div>
+            <div class="stats">
+                <div class="stat-badge">✨ <span id="val-points">100</span></div>
+                <div class="stat-badge" style="cursor:pointer;" onclick="changeScene('scene-gallery')">🖼️ <span id="val-looks">0</span></div>
+            </div>
         </nav>
-        <a class="btn-nav" onclick="showPage('studio')">JOGAR AGORA</a>
-    </header>
 
-    <!-- HOME PAGE -->
-    <main id="home" class="page active">
-        <div class="hero-text">
-            <h1>O Futuro da Moda é <span style="color:var(--primary)">Inteligência</span>.</h1>
-            <p>Combine sua criatividade com IA. Analise seu estilo, crie looks icônicos e faça história nas passarelas digitais do Pop Star.</p>
-            <div style="display:flex; gap:20px;">
-                <button class="btn-nav" style="padding: 20px 40px;" onclick="showPage('studio')">Abrir Estúdio</button>
-                <button class="btn-nav" style="padding: 20px 40px; background:none; border: 2px solid #000; color:#000;" onclick="showPage('scanner')">Explorar AI</button>
+        <!-- Menu Scene -->
+        <div id="scene-menu" class="scene active">
+            <div class="hero-box">
+                <h1 style="font-size: 6rem; margin-bottom: 10px;">Veste e Brilha</h1>
+                <p style="font-size: 1.5rem; color: #666; margin-bottom: 50px;">O jogo de moda mais exclusivo do GitHub</p>
+                <button class="btn-main" onclick="changeScene('scene-closet')">Entrar no Estúdio</button>
             </div>
         </div>
-        <div class="hero-img">
-            <img src="assets/background.png" alt="Fashion Hero">
-        </div>
-    </main>
 
-    <!-- AI SCANNER PAGE -->
-    <section id="scanner" class="page">
-        <h2 style="font-size: 3.5rem; font-weight: 900;">Reconhecimento de <span style="color:var(--secondary)">Estilo AI</span></h2>
-        <p style="color:#777; font-size: 1.2rem; margin-top: 20px;">Faça upload de um look e nossa IA analisará os componentes para você.</p>
-        
-        <div class="scanner-container">
-            <div id="upload-box" onclick="document.getElementById('file-input').click()">
-                <div id="upload-placeholder">
-                    <p style="font-size: 3rem;">📸</p>
-                    <p style="font-weight: 700; color: #888; margin-top: 10px;">Clique ou arraste uma foto aqui</p>
+        <!-- Closet Scene -->
+        <div id="scene-closet" class="scene">
+            <div class="studio-preview">
+                <div class="doll-stage" id="main-doll">
+                    <img src="assets/avatar_base.png" class="clothing-layer" style="z-index: 1;">
+                    <img id="layer-shoes" src="" class="clothing-layer" style="z-index: 10; display:none;">
+                    <img id="layer-dress" src="" class="clothing-layer" style="z-index: 20; display:none;">
+                    <img id="layer-hair" src="" class="clothing-layer" style="z-index: 30; display:none;">
+                    <img id="layer-acc" src="" class="clothing-layer" style="z-index: 40; display:none;">
                 </div>
-                <img id="preview-img" src="" style="display:none;">
             </div>
-            <input type="file" id="file-input" style="display:none;" onchange="handleImage(event)">
             
-            <div class="scan-results" id="scan-results">
-                <h3 style="margin-bottom: 20px; font-weight: 800;">Análise Concluída:</h3>
-                <div id="ai-labels"></div>
-                <div style="margin-top: 30px;">
-                    <p style="font-weight: 700; color:var(--primary)">Pontos de Inspiração Ganhos: +250 ✨</p>
-                    <button class="btn-nav" style="margin-top: 20px;" onclick="showPage('studio')">Usar no Estúdio</button>
+            <div class="editor-panel">
+                <div class="category-tabs" id="tabs-container">
+                    <button class="cat-btn active" onclick="switchCategory('hair')">CABELO</button>
+                    <button class="cat-btn" onclick="switchCategory('dress')">LOOKS</button>
+                    <button class="cat-btn" onclick="switchCategory('shoes')">SOULEIRS</button>
+                    <button class="cat-btn" onclick="switchCategory('acc')">DETALHES</button>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- STUDIO GAME PAGE -->
-    <section id="studio" class="page">
-        <div class="studio-container">
-            <div class="closet-side">
-                <div class="doll-view" id="doll-capture">
-                    <img src="assets/avatar_base.png" class="layer" style="z-index: 1;">
-                    <img id="lay-hair" src="" class="layer" style="z-index: 10; display:none;">
-                    <img id="lay-dress" src="" class="layer" style="z-index: 5; display:none;">
-                    <img id="lay-shoes" src="" class="layer" style="z-index: 3; display:none;">
+                <div class="inventory" id="inventory-grid">
+                    <!-- Injected by JS -->
                 </div>
-                <!-- HUD In-Game -->
-                <div style="position:absolute; top:30px; left:30px; background:white; padding:10px 20px; border-radius:20px; font-weight:800; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-                    MOEDAS: <span id="game-coins">100</span>
-                </div>
-            </div>
-            <div class="editor-side">
-                <div style="padding: 20px; border-bottom: 1px solid #eee; display:flex; gap:10px;">
-                    <button class="btn-nav" style="font-size: 0.7rem; padding: 10px;" onclick="setCat('hair')">CABELO</button>
-                    <button class="btn-nav" style="font-size: 0.7rem; padding: 10px;" onclick="setCat('dress')">VESTIDO</button>
-                    <button class="btn-nav" style="font-size: 0.7rem; padding: 10px;" onclick="setCat('shoes')">SAPATOS</button>
-                </div>
-                <div class="grid" id="studio-grid"></div>
-                <div style="padding: 30px;">
-                    <button class="btn-nav" style="width:100%;" onclick="finishLook()">FINALIZAR LOOK</button>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- GALLERY PAGE -->
-    <section id="gallery" class="page">
-        <h2 style="font-size: 3.5rem; text-align: center; font-weight: 900;">Minha Galeria</h2>
-        <div id="gal-items" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 8%;"></div>
-    </section>
-
-    <footer>
-        <div class="footer-col">
-            <div class="logo">POP STAR.AI</div>
-            <p style="margin-top:20px;">Transformando a criatividade humana através da inteligência artificial aplicada à moda.</p>
-        </div>
-        <div class="footer-col">
-            <h4>EXPLORAR</h4>
-            <ul>
-                <li>Coleções</li>
-                <li>Scanner AI</li>
-                <li>Estúdio Pro</li>
-                <li>Ranking</li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>EMPRESA</h4>
-            <ul>
-                <li>Sobre</li>
-                <li>Termos de Uso</li>
-                <li>Privacidade</li>
-                <li>Contato</li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>REDE SOCIAL</h4>
-            <div style="display:flex; gap: 20px; font-size: 1.5rem;">
-                <span style="cursor:pointer;">📸</span>
-                <span style="cursor:pointer;">🐦</span>
-                <span style="cursor:pointer;">🎵</span>
+                <div class="editor-footer">
+                    <div style="display:flex; gap:10px;">
+                        <button class="cat-btn" style="flex:1" onclick="randomize()">🎲 Random</button>
+                        <button class="cat-btn" style="flex:1" onclick="resetDoll()">🔄 Limpar</button>
+                    </div>
+                    <button class="btn-finish" onclick="saveAndPost()">Publicar Estilo</button>
+                </div>
             </div>
         </div>
-    </footer>
+
+        <!-- Gallery Scene -->
+        <div id="scene-gallery" class="scene">
+            <h2 style="font-size: 3rem; margin-top: 40px; font-weight: 900;">Minha Coleção</h2>
+            <button class="cat-btn" style="margin-top: 20px;" onclick="changeScene('scene-closet')">Voltar ao Estúdio</button>
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Saved looks here -->
+            </div>
+        </div>
+
+        <!-- Post Results Scene -->
+        <div id="scene-post" class="scene">
+            <div class="photo-result" id="photo-canvas">
+                <!-- Result cloned here -->
+            </div>
+            <button class="btn-main" style="margin-top: 50px;" onclick="changeScene('scene-closet')">Novo Look</button>
+        </div>
+    </div>
+
+    <!-- Reward Modal -->
+    <div id="modal-reward" class="modal">
+        <div class="modal-content">
+            <h2 style="font-size: 3rem; margin-bottom: 20px;">Vogue Viral! 💖</h2>
+            <p style="font-size: 1.2rem; color: #777;">Sua postagem quebrou o feed!</p>
+            <div style="font-size: 6rem; font-weight: 950; color: var(--primary-dark);" id="reward-val">+0</div>
+            <p style="font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">Pontos Ganhos</p>
+            <button class="btn-main" style="margin-top: 40px; width: 100%;" onclick="closeModal()">Continuar</button>
+        </div>
+    </div>
+
+    <div id="toast">Ficou maravilhoso! ✨</div>
 
     <script>
-        // State
-        const state = {
-            points: 500,
-            activeCat: 'hair',
-            current: { hair: null, dress: null, shoes: null },
-            model: null
+        // Engine State
+        const App = {
+            points: parseInt(localStorage.getItem('psr_points')) || 100,
+            looksCount: parseInt(localStorage.getItem('psr_looks_count')) || 0,
+            gallery: JSON.parse(localStorage.getItem('psr_gallery')) || [],
+            current: { hair: null, dress: null, shoes: null, acc: null },
+            activeCat: 'hair'
         };
 
-        const db = {
+        const Database = {
             hair: [
-                { id: 'h1', src: 'assets/hair_pink.png' },
-                { id: 'h2', src: 'assets/hair_blonde.png' }
+                { id: 'h1', name: 'Wave', src: 'assets/hair_pink.png', price: 0 },
+                { id: 'h2', name: 'Gold', src: 'assets/hair_blonde.png', price: 50 },
+                { id: 'h3', name: 'Noir', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,50 Q20,10 50,10 Q80,10 80,50 L80,70 L20,70 Z" fill="%23222"/></svg>', price: 100 },
+                { id: 'h4', name: 'Pixie', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,40 Q50,10 70,40 L70,50 L30,50 Z" fill="%23ff66b2"/></svg>', price: 80 }
             ],
             dress: [
-                { id: 'd1', src: 'assets/dress_glamour.png' }
+                { id: 'd1', name: 'Gown', src: 'assets/dress_glamour.png', price: 0 },
+                { id: 'd2', name: 'Cyan', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150"><path d="M30,30 L70,30 L85,150 L15,150 Z" fill="%2300ced1"/></svg>', price: 150 },
+                { id: 'd3', name: 'Rose', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150"><path d="M20,20 Q50,0 80,20 L90,150 L10,150 Z" fill="%23ff99cc"/></svg>', price: 200 }
             ],
             shoes: [
-                { id: 's1', src: 'https://via.placeholder.com/400x600/eee/333?text=Heels' }
+                { id: 's1', name: 'Glass', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path d="M20,10 L40,10 L50,50 L10,50 Z" fill="%23eee"/></svg>', price: 0 },
+                { id: 's2', name: 'Rubi', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path d="M20,10 L40,10 L50,50 L10,50 Z" fill="%23ff3385"/></svg>', price: 120 }
+            ],
+            acc: [
+                { id: 'a1', name: 'Tiara', src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path d="M10,40 L90,40 L50,0 Z" fill="%23ffd700"/></svg>', price: 300 }
             ]
         };
 
-        // UI Manager
-        function showPage(p) {
-            document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
-            document.getElementById(p).classList.add('active');
-            window.scrollTo(0,0);
-            if(p === 'studio') renderStudio();
+        // Core Functions
+        function sync() {
+            document.getElementById('val-points').innerText = App.points;
+            document.getElementById('val-looks').innerText = App.looksCount;
+            localStorage.setItem('psr_points', App.points);
+            localStorage.setItem('psr_looks_count', App.looksCount);
+            localStorage.setItem('psr_gallery', JSON.stringify(App.gallery));
         }
 
-        function setCat(c) {
-            state.activeCat = c;
-            renderStudio();
+        function changeScene(s) {
+            document.querySelectorAll('.scene').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById(s);
+            target.style.display = 'flex';
+            setTimeout(() => target.classList.add('active'), 50);
+            if(s === 'scene-closet') renderInventory();
+            if(s === 'scene-gallery') renderGallery();
         }
 
-        function renderStudio() {
-            const grid = document.getElementById('studio-grid');
+        function switchCategory(c) {
+            App.activeCat = c;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderInventory();
+        }
+
+        function renderInventory() {
+            const grid = document.getElementById('inventory-grid');
             grid.innerHTML = '';
-            db[state.activeCat].forEach(item => {
+            Database[App.activeCat].forEach(item => {
                 const div = document.createElement('div');
-                div.className = `grid-item ${state.current[state.activeCat] === item.id ? 'active' : ''}`;
-                div.onclick = () => {
-                    state.current[state.activeCat] = item.id;
-                    const l = document.getElementById(`lay-${state.activeCat}`);
-                    l.src = item.src;
-                    l.style.display = 'block';
-                    renderStudio();
-                };
-                div.innerHTML = `<img src="${item.src}">`;
+                div.className = `item ${App.current[App.activeCat] === item.id ? 'selected' : ''} ${App.points < item.price ? 'locked' : ''}`;
+                div.onclick = () => equip(item);
+                div.innerHTML = `
+                    <img src="${item.src}">
+                    <div class="price-tag">${item.price > 0 ? '✨ ' + item.price : 'FREE'}</div>
+                    ${App.points < item.price ? '<div class="item-lock">🔒</div>' : ''}
+                `;
                 grid.appendChild(div);
             });
-            document.getElementById('game-coins').innerText = state.points;
         }
 
-        function finishLook() {
-            alert("Look Enviado para a Galeria! ✨");
-            state.points += 100;
-            showPage('gallery');
+        function equip(item) {
+            if (App.points < item.price) {
+                showToast("Pontos insuficientes! ✨");
+                return;
+            }
+
+            const layer = document.getElementById(`layer-${App.activeCat}`);
+            if (App.current[App.activeCat] === item.id) {
+                App.current[App.activeCat] = null;
+                layer.style.display = 'none';
+                layer.src = '';
+            } else {
+                App.current[App.activeCat] = item.id;
+                layer.src = item.src;
+                layer.style.display = 'block';
+                layer.classList.remove('animating');
+                void layer.offsetWidth;
+                layer.classList.add('animating');
+            }
+            renderInventory();
         }
 
-        // AI Scanner Logic (Teachable Machine Style)
-        async function loadAI() {
-            console.log("Loading AI Model...");
-            state.model = await mobilenet.load();
-            console.log("Model Loaded!");
+        function resetDoll() {
+            for (let cat in App.current) {
+                App.current[cat] = null;
+                const l = document.getElementById(`layer-${cat}`);
+                l.style.display = 'none';
+                l.src = '';
+            }
+            renderInventory();
         }
 
-        async function handleImage(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async (v) => {
-                const img = document.getElementById('preview-img');
-                img.src = v.target.result;
-                img.style.display = 'block';
-                document.getElementById('upload-placeholder').style.display = 'none';
-                
-                // Analyse with AI
-                if(!state.model) await loadAI();
-                const predictions = await state.model.classify(img);
-                
-                showResults(predictions);
-            };
-            reader.readAsDataURL(file);
+        function randomize() {
+            for (let cat in Database) {
+                const aff = Database[cat].filter(i => i.price <= App.points);
+                const rand = aff[Math.floor(Math.random() * aff.length)];
+                App.current[cat] = rand.id;
+                const l = document.getElementById(`layer-${cat}`);
+                l.src = rand.src;
+                l.style.display = 'block';
+            }
+            renderInventory();
         }
 
-        function showResults(preds) {
-            const container = document.getElementById('ai-labels');
-            container.innerHTML = '';
-            preds.slice(0,3).forEach(p => {
-                const badge = document.createElement('span');
-                badge.className = 'ai-badge';
-                badge.innerText = `${p.className} (${Math.round(p.probability * 100)}%)`;
-                container.appendChild(badge);
+        function saveAndPost() {
+            if (!App.current.hair && !App.current.dress) {
+                showToast("Vista a boneca primeiro! 👗");
+                return;
+            }
+
+            // Save to Gallery
+            const lookData = {...App.current};
+            App.gallery.unshift(lookData);
+            if(App.gallery.length > 9) App.gallery.pop();
+            App.looksCount++;
+            
+            // Render Result
+            const canvas = document.getElementById('photo-canvas');
+            const source = document.getElementById('main-doll');
+            canvas.innerHTML = '';
+            canvas.appendChild(source.cloneNode(true));
+            
+            // Reward
+            const reward = Math.floor(Math.random() * 200) + 100;
+            App.points += reward;
+            
+            sync();
+            document.getElementById('reward-val').innerText = `+${reward}`;
+            document.getElementById('modal-reward').style.display = 'flex';
+        }
+
+        function renderGallery() {
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+            App.gallery.forEach(look => {
+                const card = document.createElement('div');
+                card.className = 'gallery-card';
+                // Simplified preview
+                card.innerHTML = `<div style="padding:20px; font-weight:800; color:#9933ff;">LOOK #${Math.floor(Math.random()*1000)}</div>`;
+                grid.appendChild(card);
             });
-            document.getElementById('scan-results').style.display = 'block';
-            state.points += 250;
-            document.getElementById('game-coins').innerText = state.points;
         }
 
-        // Init
-        loadAI();
+        function closeModal() {
+            document.getElementById('modal-reward').style.display = 'none';
+            changeScene('scene-post');
+        }
+
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.innerText = m;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        sync();
     </script>
 </body>
 </html>
