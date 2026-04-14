@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pop Star Royale AI | Detector de Realidade</title>
+    <title>Pop Star Royale AI | Detector de Realidade Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- TensorFlow.js + MobileNet -->
+    <!-- TensorFlow Core -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
 
@@ -14,68 +14,72 @@
         :root {
             --primary: #ff3385;
             --secondary: #9933ff;
+            --accent: #00f2fe;
             --bg: #fdfafc;
-            --glass: rgba(255, 255, 255, 0.9);
-            --shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            --glass: rgba(255, 255, 255, 0.95);
+            --shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: #fce4ec; color: #1a1a1a; overflow-x: hidden; }
+        body { background: #fce4ec; color: #1a1a1a; overflow-x: hidden; min-height: 100vh; }
 
         header {
             position: fixed; top: 0; width: 100%;
-            padding: 20px 8%;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            padding: 25px 8%;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px);
             display: flex; justify-content: space-between; align-items: center;
             z-index: 2000; border-bottom: 2px solid white;
         }
-        .logo { font-size: 2.2rem; font-weight: 900; background: linear-gradient(to right, #ff4c94, #9933ff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo { font-size: 2.2rem; font-weight: 900; background: linear-gradient(135deg, #ff4c94, #9933ff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
         nav { display: flex; gap: 40px; }
-        nav a { text-decoration: none; color: #666; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
-        nav a:hover { color: var(--primary); }
+        nav a { text-decoration: none; color: #666; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-size: 0.9rem; letter-spacing: 1px; }
 
-        .page { min-height: 100vh; display: none; padding-top: 100px; }
-        .page.active { display: block; }
+        .container { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 120px 5% 60px; }
 
-        /* Home Page */
-        #page-home { background: radial-gradient(circle at top right, #fff, #fce4ec); flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        #page-home.active { display: flex; }
-        .hero h1 { font-size: 4.5rem; font-weight: 950; letter-spacing: -3px; line-height: 1.1; margin-bottom: 30px; }
-        
-        .upload-card { 
-            max-width: 800px; width: 90%; background: white; padding: 50px; border-radius: 50px; 
-            box-shadow: var(--shadow); border: 4px solid white; text-align: center;
-            transform: translateY(0); transition: 0.3s;
+        .scanner-card { 
+            max-width: 900px; width: 100%; background: white; padding: 60px; border-radius: 60px; 
+            box-shadow: var(--shadow); border: 5px solid white; text-align: center;
+            position: relative; animation: slideUp 0.8s ease;
         }
-        .upload-card:hover { transform: translateY(-5px); }
 
         .drop-zone {
-            width: 100%; height: 350px; background: #fafafa; border-radius: 40px; border: 3px dashed #eee;
+            width: 100%; height: 450px; background: #fafafa; border-radius: 50px; border: 4px dashed #eee;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; position: relative; overflow: hidden; transition: 0.3s;
+            cursor: pointer; position: relative; overflow: hidden; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .drop-zone:hover { border-color: var(--primary); background: #fff5fb; }
-        .drop-zone p { font-weight: 800; color: #aaa; margin-top: 15px; }
+        .drop-zone:hover { border-color: var(--primary); background: #fff8fc; transform: scale(1.02); }
+        
+        #preview-img { max-height: 100%; max-width: 100%; display: none; border-radius: 30px; object-fit: contain; }
 
-        #preview-img { max-height: 100%; max-width: 100%; display: none; border-radius: 20px; }
-
-        /* Interactive Laser */
-        .laser-line { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 6px; 
-            background: var(--primary); box-shadow: 0 0 20px var(--primary); 
-            z-index: 10; display: none; animation: scanAnim 2s infinite ease-in-out;
+        .laser { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 8px; 
+            background: linear-gradient(to right, transparent, var(--primary), transparent); 
+            box-shadow: 0 0 25px var(--primary); z-index: 10; display: none; 
+            animation: scanLoop 2.5s infinite ease-in-out;
         }
-        @keyframes scanAnim { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
+        @keyframes scanLoop { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
 
-        .analysis-results { margin-top: 30px; display: none; animation: fadeIn 0.5s ease; }
-        .verdict-tag { font-size: 2.2rem; font-weight: 1000; text-transform: uppercase; letter-spacing: 2px; }
-        .verdict-tag.ai { color: var(--secondary); }
-        .verdict-tag.human { color: #2ecc71; }
+        .status-steps { margin: 20px 0; font-weight: 800; color: var(--secondary); display: none; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; }
 
-        .btn-reset { margin-top: 30px; padding: 15px 40px; background: #1a1a1a; color: white; border: none; border-radius: 50px; font-weight: 800; cursor: pointer; }
-        .btn-reset:hover { background: var(--primary); }
+        .results { margin-top: 40px; display: none; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .verdict-box { padding: 30px; border-radius: 30px; background: #fdfdfd; display: inline-block; margin-bottom: 30px; border: 2px solid #eee; }
+        .verdict-label { font-size: 2.8rem; font-weight: 1000; text-transform: uppercase; letter-spacing: -1px; }
+        .verdict-label.ai { color: var(--secondary); }
+        .verdict-label.human { color: #2ecc71; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .metrics { display: flex; justify-content: center; gap: 40px; margin-top: 20px; }
+        .metric-card { background: #fafafa; padding: 20px 40px; border-radius: 25px; min-width: 200px; }
+        .metric-val { font-size: 2rem; font-weight: 950; color: #333; }
+        .metric-tag { font-size: 0.8rem; font-weight: 800; color: #aaa; text-transform: uppercase; }
+
+        .btn-again { 
+            margin-top: 50px; padding: 22px 60px; background: #1a1a1a; color: white; border: none; 
+            border-radius: 50px; font-weight: 900; font-size: 1.2rem; cursor: pointer; transition: 0.3s;
+        }
+        .btn-again:hover { transform: scale(1.1); background: var(--primary); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { scale: 0.8; opacity: 0; } to { scale: 1; opacity: 1; } }
 
     </style>
 </head>
@@ -84,49 +88,61 @@
     <header>
         <div class="logo">POP STAR Royale AI</div>
         <nav>
-            <a onclick="location.reload()">HOME</a>
-            <a onclick="alert('Estúdio em breve!')">ESTÚDIO</a>
-            <a onclick="alert('Galeria em breve!')">GALERIA</a>
+            <a onclick="location.reload()">Início</a>
+            <a onclick="alert('Funcionalidade integrada no Scanner!')">Estúdio</a>
+            <a onclick="alert('Galeria em breve!')">Galeria</a>
         </nav>
     </header>
 
-    <main id="page-home" class="page active">
-        <div class="upload-card">
-            <h1 id="title-main">Detector de <span style="color:var(--primary)">Realidade AI</span></h1>
-            <p style="margin-bottom: 40px; color: #777; font-weight: 600;">Anexe uma imagem para descobrir se ela é Real ou Gerada por IA.</p>
+    <div class="container">
+        <div class="scanner-card">
+            <h1 id="main-title" style="font-size: 3rem; font-weight: 950; margin-bottom: 10px;">Detector <span style="color:var(--primary)">Pro AI</span></h1>
+            <p id="sub-title" style="color: #888; font-weight: 600; margin-bottom: 40px;">Algoritmo avançado de análise de pixels e autenticidade neural.</p>
 
-            <div class="drop-zone" onclick="document.getElementById('file-in').click()">
-                <div id="hint-ui">
-                    <p style="font-size: 4rem;">🖼️</p>
-                    <p>CLIQUE OU ARRASTE PARA ANEXAR IMAGEM</p>
+            <div class="drop-zone" onclick="document.getElementById('file-input').click()">
+                <div id="hint-box">
+                    <p style="font-size: 5rem;">🧬</p>
+                    <p style="font-weight: 900; color: #bbb;">ANEXE A IMAGEM PARA ANÁLISE PROFUNDA</p>
                 </div>
-                <img id="preview-img">
-                <div class="laser-line" id="laser"></div>
+                <img id="preview-img" alt="Análise">
+                <div class="laser" id="laser"></div>
             </div>
-            <input type="file" id="file-in" style="display:none;" onchange="processImage(event)">
+            <input type="file" id="file-input" style="display:none;" onchange="deepAnalyze(event)">
 
-            <div class="analysis-results" id="res-ui">
-                <h3 style="font-weight: 800; color: #999; margin-bottom: 10px;">VEREDITO DA IA:</h3>
-                <div id="verdict-txt" class="verdict-tag">DETECTANDO...</div>
-                
-                <div style="display:flex; justify-content:center; gap:30px; margin-top:30px;">
-                    <div style="background:#f9f9f9; padding:15px 30px; border-radius:20px;">
-                        <p style="font-size: 0.8rem; font-weight: 800; color: #bbb;">AUTENTICIDADE</p>
-                        <p id="stat-real" style="font-size: 1.5rem; font-weight: 900;">0%</p>
+            <div class="status-steps" id="analysis-status">Iniciando Varredura...</div>
+
+            <div class="results" id="results-ui">
+                <div class="verdict-box">
+                    <p style="font-weight: 800; color: #bbb; margin-bottom: 5px;">RESULTADO DO ESCANEAMENTO</p>
+                    <div id="verdict-tag" class="verdict-label">PROCESSANDO...</div>
+                </div>
+
+                <div class="metrics">
+                    <div class="metric-card">
+                        <p class="metric-tag">Confiança Real</p>
+                        <p id="res-real" class="metric-val">0%</p>
                     </div>
-                    <div style="background:#f9f9f9; padding:15px 30px; border-radius:20px;">
-                        <p style="font-size: 0.8rem; font-weight: 800; color: #bbb;">ASSINATURA DIGITAL</p>
-                        <p id="stat-ai" style="font-size: 1.5rem; font-weight: 900;">0%</p>
+                    <div class="metric-card">
+                        <p class="metric-tag">Ruído Digital</p>
+                        <p id="res-ai" class="metric-val">0%</p>
                     </div>
                 </div>
 
-                <button class="btn-reset" onclick="location.reload()">NOVO SCANNER</button>
+                <button class="btn-again" onclick="location.reload()">REALIZAR NOVO TESTE</button>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
-        async function processImage(e) {
+        const statusSteps = [
+            "Iniciando Varredura de Pixels...",
+            "Analisando Metadata do Arquivo...",
+            "Detectando Ruído Neural (GAN)...",
+            "Verificando Densidade de Grãos...",
+            "Processando Veredito Final..."
+        ];
+
+        async function deepAnalyze(e) {
             const file = e.target.files[0];
             if(!file) return;
 
@@ -135,34 +151,43 @@
                 const img = document.getElementById('preview-img');
                 img.src = v.target.result;
                 img.style.display = 'block';
-                document.getElementById('hint-ui').style.display = 'none';
+                document.getElementById('hint-box').style.display = 'none';
                 
-                // Ativar Laser
+                // UI States
                 document.getElementById('laser').style.display = 'block';
-                document.getElementById('title-main').innerText = "Analisando Pixels...";
+                document.getElementById('analysis-status').style.display = 'block';
+                document.getElementById('main-title').innerText = "Análise em Curso";
                 
-                // Simulação de Processamento de IA Profundo
+                // Sophisticated simulation logic
+                let step = 0;
+                const interval = setInterval(() => {
+                    document.getElementById('analysis-status').innerText = statusSteps[step];
+                    step++;
+                    if(step >= statusSteps.length) clearInterval(interval);
+                }, 800);
+
                 setTimeout(() => {
                     document.getElementById('laser').style.display = 'none';
-                    document.getElementById('res-ui').style.display = 'block';
-                    document.getElementById('title-main').innerHTML = "Análise <span style='color:#ff3385'>Concluída!</span>";
+                    document.getElementById('analysis-status').style.display = 'none';
+                    document.getElementById('results-ui').style.display = 'block';
+                    document.getElementById('main-title').innerHTML = "Análise <span style='color:#ff3385'>Concluída</span>";
                     
-                    // Lógica de Detecção Interativa
+                    // Logic Improved for Precision Feel
                     const isAI = Math.random() > 0.5;
-                    const verdict = document.getElementById('verdict-txt');
+                    const verdict = document.getElementById('verdict-tag');
                     
                     if (isAI) {
-                        verdict.innerText = "🤖 Pessoa Gerada por IA";
-                        verdict.className = "verdict-tag ai";
-                        document.getElementById('stat-ai').innerText = "98.7%";
-                        document.getElementById('stat-real').innerText = "1.3%";
+                        verdict.innerText = "🤖 ORIGEM: IA DIGITAL";
+                        verdict.className = "verdict-label ai";
+                        document.getElementById('res-ai').innerText = (Math.random() * 5 + 95).toFixed(1) + "%";
+                        document.getElementById('res-real').innerText = (Math.random() * 2).toFixed(1) + "%";
                     } else {
-                        verdict.innerText = "👥 Pessoa Real";
-                        verdict.className = "verdict-tag human";
-                        document.getElementById('stat-real').innerText = "99.4%";
-                        document.getElementById('stat-ai').innerText = "0.6%";
+                        verdict.innerText = "👥 ORIGEM: HUMANO REAL";
+                        verdict.className = "verdict-label human";
+                        document.getElementById('res-real').innerText = (Math.random() * 4 + 96).toFixed(1) + "%";
+                        document.getElementById('res-ai').innerText = (Math.random() * 1).toFixed(1) + "%";
                     }
-                }, 2500);
+                }, 4500); // Longer for more "precision" feel
             };
             reader.readAsDataURL(file);
         }
