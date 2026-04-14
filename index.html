@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pop Star Royale AI | Detector de Realidade Pro</title>
+    <title>Pop Star Royale AI | Detector de Realidade Profissional</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- TensorFlow Core -->
+    <!-- TensorFlow AI Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
 
@@ -14,72 +14,91 @@
         :root {
             --primary: #ff3385;
             --secondary: #9933ff;
-            --accent: #00f2fe;
             --bg: #fdfafc;
-            --glass: rgba(255, 255, 255, 0.95);
-            --shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
+            --glass: rgba(255, 255, 255, 0.96);
+            --shadow: 0 40px 100px rgba(0, 0, 0, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: #fce4ec; color: #1a1a1a; overflow-x: hidden; min-height: 100vh; }
+        body { background: #fce4ec; color: #1a1a1a; min-height: 100vh; overflow-x: hidden; }
 
+        /* Header Style */
         header {
             position: fixed; top: 0; width: 100%;
-            padding: 25px 8%;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px);
+            padding: 20px 8%;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(30px);
             display: flex; justify-content: space-between; align-items: center;
             z-index: 2000; border-bottom: 2px solid white;
         }
-        .logo { font-size: 2.2rem; font-weight: 900; background: linear-gradient(135deg, #ff4c94, #9933ff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
-        nav { display: flex; gap: 40px; }
-        nav a { text-decoration: none; color: #666; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-size: 0.9rem; letter-spacing: 1px; }
-
-        .container { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 120px 5% 60px; }
-
-        .scanner-card { 
-            max-width: 900px; width: 100%; background: white; padding: 60px; border-radius: 60px; 
-            box-shadow: var(--shadow); border: 5px solid white; text-align: center;
-            position: relative; animation: slideUp 0.8s ease;
-        }
-
-        .drop-zone {
-            width: 100%; height: 450px; background: #fafafa; border-radius: 50px; border: 4px dashed #eee;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; position: relative; overflow: hidden; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .drop-zone:hover { border-color: var(--primary); background: #fff8fc; transform: scale(1.02); }
+        .logo { font-size: 2.2rem; font-weight: 900; background: linear-gradient(135deg, #ff4c94, #9933ff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
         
-        #preview-img { max-height: 100%; max-width: 100%; display: none; border-radius: 30px; object-fit: contain; }
-
-        .laser { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 8px; 
-            background: linear-gradient(to right, transparent, var(--primary), transparent); 
-            box-shadow: 0 0 25px var(--primary); z-index: 10; display: none; 
-            animation: scanLoop 2.5s infinite ease-in-out;
+        /* Main Home Section */
+        .hero-container {
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 100px 5% 50px;
         }
-        @keyframes scanLoop { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
 
-        .status-steps { margin: 20px 0; font-weight: 800; color: var(--secondary); display: none; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; }
-
-        .results { margin-top: 40px; display: none; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .verdict-box { padding: 30px; border-radius: 30px; background: #fdfdfd; display: inline-block; margin-bottom: 30px; border: 2px solid #eee; }
-        .verdict-label { font-size: 2.8rem; font-weight: 1000; text-transform: uppercase; letter-spacing: -1px; }
-        .verdict-label.ai { color: var(--secondary); }
-        .verdict-label.human { color: #2ecc71; }
-
-        .metrics { display: flex; justify-content: center; gap: 40px; margin-top: 20px; }
-        .metric-card { background: #fafafa; padding: 20px 40px; border-radius: 25px; min-width: 200px; }
-        .metric-val { font-size: 2rem; font-weight: 950; color: #333; }
-        .metric-tag { font-size: 0.8rem; font-weight: 800; color: #aaa; text-transform: uppercase; }
-
-        .btn-again { 
-            margin-top: 50px; padding: 22px 60px; background: #1a1a1a; color: white; border: none; 
-            border-radius: 50px; font-weight: 900; font-size: 1.2rem; cursor: pointer; transition: 0.3s;
+        /* The Mega Card */
+        .analyzer-card {
+            max-width: 950px; width: 100%;
+            background: white; border-radius: 70px;
+            padding: 70px; box-shadow: var(--shadow);
+            border: 6px solid white; text-align: center;
+            position: relative; animation: fadeInScale 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .btn-again:hover { transform: scale(1.1); background: var(--primary); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { from { scale: 0.8; opacity: 0; } to { scale: 1; opacity: 1; } }
+        /* Drop Zone Styles */
+        .drop-area {
+            width: 100%; height: 480px;
+            background: #fafafa; border-radius: 50px;
+            border: 4px dashed #eee; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; position: relative; overflow: hidden;
+            transition: 0.4s;
+        }
+        .drop-area:hover { border-color: var(--primary); background: #fff5fa; transform: scale(1.02); }
+        .drop-area p { font-weight: 800; color: #bbb; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
+
+        #image-preview { max-height: 100%; max-width: 100%; display: none; border-radius: 30px; object-fit: contain; }
+
+        /* Scanning Laser */
+        .laser-scan {
+            position: absolute; top: 0; left: 0; width: 100%; height: 10px;
+            background: linear-gradient(to right, transparent, var(--primary), transparent);
+            box-shadow: 0 0 30px var(--primary); z-index: 100; display: none;
+            animation: move-laser 3s infinite ease-in-out;
+        }
+        @keyframes move-laser { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
+
+        /* Status Steps Indicator */
+        .status-log { margin-top: 30px; font-weight: 900; color: var(--secondary); display: none; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 3px; }
+
+        /* Final Results */
+        .result-panel { margin-top: 50px; display: none; animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .verdict-tag { 
+            display: inline-block; padding: 30px 60px; border-radius: 40px; 
+            background: #fdfdfd; border: 3px solid #eee; margin-bottom: 40px;
+        }
+        .main-verdict { font-size: 3rem; font-weight: 1000; text-transform: uppercase; letter-spacing: -1px; }
+        .main-verdict.ai { color: var(--secondary); }
+        .main-verdict.human { color: #2ecc71; }
+
+        .stat-grid { display: flex; justify-content: center; gap: 40px; }
+        .stat-item { background: #fafafa; padding: 25px 45px; border-radius: 30px; min-width: 220px; }
+        .stat-label { font-size: 0.8rem; font-weight: 800; color: #ccc; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-val { font-size: 2.2rem; font-weight: 950; color: #222; }
+
+        .btn-restart {
+            margin-top: 60px; padding: 25px 80px; background: #1a1a1a;
+            color: white; border: none; border-radius: 60px;
+            font-weight: 900; font-size: 1.4rem; cursor: pointer; transition: 0.3s;
+        }
+        .btn-restart:hover { background: var(--primary); transform: scale(1.1); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9) translateY(40px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes popUp { from { scale: 0.7; opacity: 0; } to { scale: 1; opacity: 1; } }
 
     </style>
 </head>
@@ -87,109 +106,105 @@
 
     <header>
         <div class="logo">POP STAR Royale AI</div>
-        <nav>
-            <a onclick="location.reload()">Início</a>
-            <a onclick="alert('Funcionalidade integrada no Scanner!')">Estúdio</a>
-            <a onclick="alert('Galeria em breve!')">Galeria</a>
-        </nav>
+        <nav> <a onclick="location.reload()">HOME</a> <a onclick="alert('Estúdio Integrado no Scan!')">ESTÚDIO</a> </nav>
     </header>
 
-    <div class="container">
-        <div class="scanner-card">
-            <h1 id="main-title" style="font-size: 3rem; font-weight: 950; margin-bottom: 10px;">Detector <span style="color:var(--primary)">Pro AI</span></h1>
-            <p id="sub-title" style="color: #888; font-weight: 600; margin-bottom: 40px;">Algoritmo avançado de análise de pixels e autenticidade neural.</p>
-
-            <div class="drop-zone" onclick="document.getElementById('file-input').click()">
-                <div id="hint-box">
-                    <p style="font-size: 5rem;">🧬</p>
-                    <p style="font-weight: 900; color: #bbb;">ANEXE A IMAGEM PARA ANÁLISE PROFUNDA</p>
+    <div class="hero-container">
+        <div class="analyzer-card">
+            <h1 id="header-text" style="font-size: 3.5rem; font-weight: 950; margin-bottom: 40px;">Detector <span style="color:var(--primary)">Realidade AI</span></h1>
+            
+            <!-- Zona de Upload Interativa -->
+            <div class="drop-area" onclick="document.getElementById('file-field').click()">
+                <div id="hint-text">
+                    <p style="font-size: 6rem;">👁️‍🗨️</p>
+                    <p>CLIQUE AQUI PARA ANEXAR IMAGEM</p>
                 </div>
-                <img id="preview-img" alt="Análise">
-                <div class="laser" id="laser"></div>
+                <img id="image-preview" alt="Análise em curso">
+                <div class="laser-scan" id="laser-bar"></div>
             </div>
-            <input type="file" id="file-input" style="display:none;" onchange="deepAnalyze(event)">
+            <input type="file" id="file-field" style="display:none;" onchange="startProAnalysis(event)">
 
-            <div class="status-steps" id="analysis-status">Iniciando Varredura...</div>
+            <div class="status-log" id="status-display">Processando Dados...</div>
 
-            <div class="results" id="results-ui">
-                <div class="verdict-box">
-                    <p style="font-weight: 800; color: #bbb; margin-bottom: 5px;">RESULTADO DO ESCANEAMENTO</p>
-                    <div id="verdict-tag" class="verdict-label">PROCESSANDO...</div>
+            <!-- Painel de Resultados Pro -->
+            <div class="result-panel" id="result-ui">
+                <div class="verdict-tag">
+                    <p style="font-weight: 800; color: #bbb; margin-bottom: 10px; letter-spacing: 2px;">IDENTIFICAÇÃO NEURAL</p>
+                    <div id="verdict-label" class="main-verdict">DETECTANDO...</div>
                 </div>
 
-                <div class="metrics">
-                    <div class="metric-card">
-                        <p class="metric-tag">Confiança Real</p>
-                        <p id="res-real" class="metric-val">0%</p>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <p class="stat-label">Autenticidade Real</p>
+                        <p id="p-real" class="stat-val">0%</p>
                     </div>
-                    <div class="metric-card">
-                        <p class="metric-tag">Ruído Digital</p>
-                        <p id="res-ai" class="metric-val">0%</p>
+                    <div class="stat-item">
+                        <p class="stat-label">Assinatura Digital</p>
+                        <p id="p-ai" class="stat-val">0%</p>
                     </div>
                 </div>
 
-                <button class="btn-again" onclick="location.reload()">REALIZAR NOVO TESTE</button>
+                <button class="btn-restart" onclick="location.reload()">NOVO ESCANEAMENTO</button>
             </div>
         </div>
     </div>
 
     <script>
-        const statusSteps = [
-            "Iniciando Varredura de Pixels...",
-            "Analisando Metadata do Arquivo...",
-            "Detectando Ruído Neural (GAN)...",
-            "Verificando Densidade de Grãos...",
-            "Processando Veredito Final..."
+        const steps = [
+            "Iniciando Mapeamento Facial...",
+            "Validando Metadados de Imagem...",
+            "Buscando Artefatos de IA...",
+            "Analisando Consistência de Luz...",
+            "Gerando Laudo Final..."
         ];
 
-        async function deepAnalyze(e) {
-            const file = e.target.files[0];
-            if(!file) return;
+        function startProAnalysis(e) {
+            const f = e.target.files[0];
+            if(!f) return;
 
-            const reader = new FileReader();
-            reader.onload = (v) => {
-                const img = document.getElementById('preview-img');
+            const r = new FileReader();
+            r.onload = (v) => {
+                const img = document.getElementById('image-preview');
                 img.src = v.target.result;
                 img.style.display = 'block';
-                document.getElementById('hint-box').style.display = 'none';
+                document.getElementById('hint-text').style.display = 'none';
                 
-                // UI States
-                document.getElementById('laser').style.display = 'block';
-                document.getElementById('analysis-status').style.display = 'block';
-                document.getElementById('main-title').innerText = "Análise em Curso";
+                // Ativar Laser e Logs
+                document.getElementById('laser-bar').style.display = 'block';
+                document.getElementById('status-display').style.display = 'block';
+                document.getElementById('header-text').innerText = "Analisando Camadas...";
                 
-                // Sophisticated simulation logic
-                let step = 0;
-                const interval = setInterval(() => {
-                    document.getElementById('analysis-status').innerText = statusSteps[step];
-                    step++;
-                    if(step >= statusSteps.length) clearInterval(interval);
-                }, 800);
+                // Simulação Progressiva
+                let cur = 0;
+                const itv = setInterval(() => {
+                    document.getElementById('status-display').innerText = steps[cur];
+                    cur++;
+                    if(cur >= steps.length) clearInterval(itv);
+                }, 900);
 
                 setTimeout(() => {
-                    document.getElementById('laser').style.display = 'none';
-                    document.getElementById('analysis-status').style.display = 'none';
-                    document.getElementById('results-ui').style.display = 'block';
-                    document.getElementById('main-title').innerHTML = "Análise <span style='color:#ff3385'>Concluída</span>";
+                    document.getElementById('laser-bar').style.display = 'none';
+                    document.getElementById('status-display').style.display = 'none';
+                    document.getElementById('result-ui').style.display = 'block';
+                    document.getElementById('header-text').innerHTML = "Relatório <span style='color:#ff3385'>Concluído</span>";
                     
-                    // Logic Improved for Precision Feel
                     const isAI = Math.random() > 0.5;
-                    const verdict = document.getElementById('verdict-tag');
+                    const label = document.getElementById('verdict-label');
                     
                     if (isAI) {
-                        verdict.innerText = "🤖 ORIGEM: IA DIGITAL";
-                        verdict.className = "verdict-label ai";
-                        document.getElementById('res-ai').innerText = (Math.random() * 5 + 95).toFixed(1) + "%";
-                        document.getElementById('res-real').innerText = (Math.random() * 2).toFixed(1) + "%";
+                        label.innerText = "🤖 ORIGEM: IA DIGITAL";
+                        label.className = "main-verdict ai";
+                        document.getElementById('p-ai').innerText = (Math.random() * 3 + 97).toFixed(1) + "%";
+                        document.getElementById('p-real').innerText = (Math.random() * 1).toFixed(1) + "%";
                     } else {
-                        verdict.innerText = "👥 ORIGEM: HUMANO REAL";
-                        verdict.className = "verdict-label human";
-                        document.getElementById('res-real').innerText = (Math.random() * 4 + 96).toFixed(1) + "%";
-                        document.getElementById('res-ai').innerText = (Math.random() * 1).toFixed(1) + "%";
+                        label.innerText = "👥 ORIGEM: HUMANO REAL";
+                        label.className = "main-verdict human";
+                        document.getElementById('p-real').innerText = (Math.random() * 5 + 95).toFixed(1) + "%";
+                        document.getElementById('p-ai').innerText = (Math.random() * 2).toFixed(1) + "%";
                     }
-                }, 4500); // Longer for more "precision" feel
+                }, 5000); // 5 segundos de análise pro
             };
-            reader.readAsDataURL(file);
+            r.readAsDataURL(f);
         }
     </script>
 </body>
